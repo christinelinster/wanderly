@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<ul>
+    {% for vacation in vacations %}
+    <li><a href="">{{ vacation.destination }} [ {{ vacation.depart_date }} - {{ vacation.return_date }} ]</a></li>
+    {% endfor%}
+</ul>
+<button><a href="">Add Vacation</a></button>
+
+{% endblock %}
