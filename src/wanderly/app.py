@@ -13,6 +13,7 @@ from filters import (
     formatted_time
     )
 
+import bcrypt
 import secrets
 from database import Database
 
@@ -32,6 +33,14 @@ def load_db():
 def index():
     trips = g.storage.get_trips()
     return render_template("home.html", trips=trips)
+
+@app.route("/users/login")
+def show_login_form():
+    return render_template("login.html")
+
+@app.route("/users/signup")
+def show_signup_form():
+    return render_template("signup.html")
 
 @app.route("/trips/<int:trip_id>")
 def trip_schedule(trip_id):

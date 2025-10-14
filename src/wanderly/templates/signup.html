@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<div>
+     <h2>Start Your Journey</h2>
+    <p>Create an account to plan your adventures</p>
+
+<form action="" method="post">
+   
+    <label for="fname">First Name:</label>
+    <input type="text" name="fname" placeholder="First name">
+
+    <label for="lname">Last Name:</label>
+    <input type="text" name="lname" placeholder="Last Name">
+
+    <label for="email">Email:</label>
+    <input type="email" name="email" placeholder="your@email.com">
+
+    <label for="password">Password:</label>
+    <input type="password" name="password">
+
+    <button type="submit">Sign Up</button>
+   
+</form>
+ <p>Already have an account? <a href="{{ url_for('show_login_form')}}">Login</a></p>
+</div>
+{% endblock %}
