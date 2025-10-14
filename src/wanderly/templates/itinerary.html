@@ -2,32 +2,29 @@
 
 {% block header %}
 <h1>Your trip to {{ trip.destination }}</h1>
+<p>{{ trip.depart_date | formatted_title_date }} to {{ trip.return_date | formatted_title_date }}</p>
 {% endblock%}
-
-
-
 
 {% block content %}
 <a href="{{ url_for('index') }}">Back to Trips</a>
 
-<div>
-     {% for date, activities in schedule.items() %}
-     <h2>{{ date }}</h2>
-        
-    <table>
-       {% for act in activities %}
-    <tr>
-        <td>{{ act.activity_time | safe_default }}</td>
-        <td>{{ act.activity }}</td>
-        <td>{{ act.cost | safe_default }}</td>
-        <td>{{ act.note | safe_default }}</td>
-    </tr>
-        {% endfor %}
+<div class="itinerary-container">
+    {% for date, activities in plans_by_date.items() %}
+    <div class="trip-daily-itinerary">
+        <h2>{{ date | formatted_date }}</h2>
+        <table>
+            {% for act in activities %}
 
-
-    </table>
+            <tr>
+                <td>{{ act.activity_time | formatted_time }}</td>
+                <td>{{ act.activity }}</td>
+                <td>{{ act.cost | safe_default }}</td>
+                <td>{{ act.note | safe_default }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
     {% endfor %}
-    
 
 </div>
 

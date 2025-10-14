@@ -23,14 +23,14 @@ class Database:
                 trips = cursor.fetchall()
         return trips
     
-    def get_schedule(self, vacation_id):
+    def get_itinerary(self, trip_id):
         query = 'SELECT * FROM plans WHERE trip_id = %s ORDER BY activity_date, activity_time'
         with self._database_connect() as conn:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query, (vacation_id,))
-                schedule = cursor.fetchall()
+                cursor.execute(query, (trip_id,))
+                itinerary = cursor.fetchall()
 
-        return schedule
+        return itinerary
     
 
     def find_trip_by_id(self, trip_id):
@@ -40,4 +40,3 @@ class Database:
                 cursor.execute(query, (trip_id,))
                 trip = cursor.fetchone()
         return trip
-    

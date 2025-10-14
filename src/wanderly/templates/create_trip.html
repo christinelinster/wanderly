@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<a href="{{ url_for('index') }}">Back to Trips</a>
+
+<div>
+    <h1>Plan New Adventure</h1>
+    <p>Where will your next journey take you? Add the details below to start planning.</p>
+    <form action="" method="post">
+        <label for="trip-name">Trip Name</label>
+        <input type="text" name="trip-name" placeholder="e.g., Summer in Taiwan">
+
+        <label for="start-date">Start Date</label>
+        <input type="date" name="start-date">
+
+        <label for="end-date">End Date</label>
+        <input type="date" name="end-date">
+
+        <button type="submit">Create Trip</button>
+    </form>
+</div>
+
+{% endblock %}
