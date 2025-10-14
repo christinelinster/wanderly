@@ -6,11 +6,14 @@ from flask import (
     redirect
 )
 
+from filters import safe_default
 import secrets
 from database import Database
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
+
+app.jinja_env.filters['safe_default'] = safe_default
 
 @app.before_request
 def load_db():
@@ -18,13 +21,25 @@ def load_db():
 
 @app.route("/")
 def index():
-    vacations = g.storage.get_vacations()
-    return render_template("home.html", vacations=vacations)
+    trips = g.storage.get_trips()
+    return render_template("home.html", trips=trips)
 
-@app.route('/<vacation_id>')
-def vacation_schedule(vacation_id):
-    schedule = g.storage.get_itinerary(vacation_id)
-    return render_template("itinerary.html", schedule=schedule)
+@app.route("/trips/<int:trip_id>")
+def trip_schedule(trip_id):
+    trip = g.storage.find_trip_by_id(trip_id)
+    schedule = g.storage.get_schedule(trip_id)
+    plans_by_date = {}
+
+    for activity in schedule: 
+        date = activity['activity_date']
+
+        if date not in plans_by_date:
+            plans_by_date[date] = []
+
+        plans_by_date[date].append(activity)
+
+    return render_template("itinerary.html", schedule=plans_by_date, trip=trip)
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5003)

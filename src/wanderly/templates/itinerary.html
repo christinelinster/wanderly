@@ -1,9 +1,35 @@
 {% extends 'layout.html' %}
+
+{% block header %}
+<h1>Your trip to {{ trip.destination }}</h1>
+{% endblock%}
+
+
+
+
 {% block content %}
-{% for item in schedule %}
-<p>{{ item.activity_date }}</p>
-<p>{{ item.activity }}</p>
-<p>{{ item.cost }}</p>
-{%  endfor %}
+<a href="{{ url_for('index') }}">Back to Trips</a>
+
+<div>
+     {% for date, activities in schedule.items() %}
+     <h2>{{ date }}</h2>
+        
+    <table>
+       {% for act in activities %}
+    <tr>
+        <td>{{ act.activity_time | safe_default }}</td>
+        <td>{{ act.activity }}</td>
+        <td>{{ act.cost | safe_default }}</td>
+        <td>{{ act.note | safe_default }}</td>
+    </tr>
+        {% endfor %}
+
+
+    </table>
+    {% endfor %}
     
+
+</div>
+
+
 {% endblock%}

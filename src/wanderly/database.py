@@ -1,6 +1,8 @@
 import psycopg2
 from contextlib import contextmanager
 from psycopg2.extras import DictCursor
+from itertools import groupby
+from operator import itemgetter
 
 class Database:
     
@@ -13,18 +15,29 @@ class Database:
         finally:
             connection.close()
 
-    def get_vacations(self):
-        query = 'SELECT * FROM vacations'
+    def get_trips(self):
+        query = 'SELECT * FROM trips'
         with self._database_connect() as conn:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query)
-                vacations = cursor.fetchall()
-        return vacations
+                trips = cursor.fetchall()
+        return trips
     
-    def get_itinerary(self, vacation_id):
-        query = 'SELECT * FROM plans WHERE vacation_id = %s'
+    def get_schedule(self, vacation_id):
+        query = 'SELECT * FROM plans WHERE trip_id = %s ORDER BY activity_date, activity_time'
         with self._database_connect() as conn:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (vacation_id,))
                 schedule = cursor.fetchall()
+
         return schedule
+    
+
+    def find_trip_by_id(self, trip_id):
+        query = 'SELECT * FROM trips WHERE id = %s'
+        with self._database_connect() as conn:
+            with conn.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(query, (trip_id,))
+                trip = cursor.fetchone()
+        return trip
+    
