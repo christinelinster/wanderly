@@ -40,3 +40,12 @@ class Database:
                 cursor.execute(query, (trip_id,))
                 trip = cursor.fetchone()
         return trip
+    
+
+    def get_user_credentials(self, username):
+        query = 'SELECT * FROM users WHERE username = %s'
+        with self._database_connect() as conn:
+            with conn.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(query, (username,))
+                user = cursor.fetchone()
+        return user 

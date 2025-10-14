@@ -1,14 +1,16 @@
 {% extends 'layout.html' %}
 
+{% block header %}
+ <h2>Welcome Back</h2>
+<p>Login to continue your adventures</p>
+{% endblock%}
+
 {% block content %}
 <div>
-    <h2>Welcome Back</h2>
-    <p>Login to continue your adventures</p>
-
     <form action="" method="post">
 
-        <label for="email">Email:</label>
-        <input type="email" name="email" placeholder="your@email.com">
+        <label for="username">Username:</label>
+        <input type="text" name="username" placeholder="">
 
         <label for="password">Password:</label>
         <input type="password" name="password">
