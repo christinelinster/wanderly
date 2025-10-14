@@ -41,6 +41,13 @@ class Database:
                 trip = cursor.fetchone()
         return trip
     
+    def find_id_by_username(self, username):
+        query = 'SELECT id from users WHERE username = %s'
+        with self._database_connect() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, (username,))
+                user_id = cursor.fetchone()
+        return user_id[0]
 
     def get_user_credentials(self, username):
         query = 'SELECT * FROM users WHERE username = %s'
