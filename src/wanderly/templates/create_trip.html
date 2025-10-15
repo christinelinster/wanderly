@@ -6,15 +6,15 @@
 <div>
     <h1>Plan New Adventure</h1>
     <p>Where will your next journey take you? Add the details below to start planning.</p>
-    <form action="" method="post">
-        <label for="trip-name">Trip Name</label>
-        <input type="text" name="trip-name" placeholder="e.g., Summer in Taiwan">
+    <form action="{{ url_for('create_trip')}}" method="post">
+        <label for="destination">Trip Name</label>
+        <input type="text" name="destination" placeholder="e.g., Summer in Taiwan" value="{{ destination }}">
 
         <label for="start-date">Start Date</label>
-        <input type="date" name="start-date">
+        <input type="date" name="start-date" value="{{ start_date }}">
 
         <label for="end-date">End Date</label>
-        <input type="date" name="end-date">
+        <input type="date" name="end-date" value="{{ end_date }}">
 
         <button type="submit">Create Trip</button>
     </form>

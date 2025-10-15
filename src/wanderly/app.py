@@ -15,6 +15,9 @@ from filters import (
     formatted_title_date,
     formatted_time
     )
+from utils import (
+    error_for_trips,
+)
 
 from functools import wraps
 import bcrypt
@@ -103,6 +106,21 @@ def trip_schedule(trip_id):
 @require_logged_in_user
 def plan_new_trip():
     return render_template("create_trip.html")
+
+@app.route("/trips", methods=["POST"])
+def create_trip():
+    destination = request.form['destination']
+    start_date = request.form['start-date']
+    end_date = request.form['end-date']
+
+    error = error_for_trips(start_date, end_date)
+    if error:
+        flash(error, "error")
+        return render_template("create_trip.html", destination=destination, start_date=start_date, end_date=end_date)
+
+    g.storage.create_new_trip(destination, start_date, end_date, session['user_id'])
+    flash('Your new adventure has been created', "success")
+    return redirect(url_for('index'))
 
 @app.route("/signout", methods=["POST"])
 def signout():

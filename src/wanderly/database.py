@@ -57,3 +57,9 @@ class Database:
                 cursor.execute(query, (email,))
                 user = cursor.fetchone()
         return user 
+
+    def create_new_trip(self, destination, start_date, end_date, user_id ):
+        query = 'INSERT INTO trips (destination, depart_date, return_date, user_id) VALUES(%s, %s, %s, %s)'
+        with self._database_connect() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, (destination, start_date, end_date, user_id,))
