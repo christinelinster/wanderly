@@ -15,12 +15,13 @@ class Database:
         finally:
             connection.close()
 
-    def get_trips(self):
-        query = 'SELECT * FROM trips'
+    def get_trips_by_user(self, user_id):
+        query = 'SELECT users.full_name AS name, trips.* FROM trips JOIN users ON trips.user_id = users.id WHERE trips.user_id = %s'
         with self._database_connect() as conn:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query)
+                cursor.execute(query, (user_id,))
                 trips = cursor.fetchall()
+                print(trips)
         return trips
     
     def get_itinerary(self, trip_id):
@@ -49,10 +50,10 @@ class Database:
                 user_id = cursor.fetchone()
         return user_id[0]
 
-    def get_user_credentials(self, username):
-        query = 'SELECT * FROM users WHERE username = %s'
+    def get_user_credentials(self, email):
+        query = 'SELECT * FROM users WHERE email = %s'
         with self._database_connect() as conn:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query, (username,))
+                cursor.execute(query, (email,))
                 user = cursor.fetchone()
         return user 

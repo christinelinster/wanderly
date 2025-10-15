@@ -29,8 +29,8 @@ app.jinja_env.filters['formatted_date'] = formatted_date
 app.jinja_env.filters['formatted_title_date'] = formatted_title_date
 app.jinja_env.filters['formatted_time'] = formatted_time
 
-def valid_credentials(username, password):
-    user = g.storage.get_user_credentials(username)
+def valid_credentials(email, password):
+    user = g.storage.get_user_credentials(email)
     if user:
         stored_password = user["password"].encode('utf-8')
         if bcrypt.checkpw(password.encode('utf-8'), stored_password):
@@ -49,17 +49,17 @@ def require_logged_in_user(f):
         return f(*args, **kwargs)
     return decorated_function
 
-
 @app.before_request
 def load_db():
     g.storage = Database()
 
-
 @app.route("/")
 @require_logged_in_user
 def index():
-    trips = g.storage.get_trips()
-    return render_template("home.html", trips=trips)
+    trips = g.storage.get_trips_by_user(session['user_id'])
+    name = trips[0]['name']
+    first_name = name.split()[0]
+    return render_template("home.html", trips=trips, first_name=first_name)
 
 @app.route("/login")
 def show_login_form():
@@ -67,10 +67,10 @@ def show_login_form():
 
 @app.route("/login", methods=["POST"])
 def login():
-    username = request.form['username']
+    email = request.form['email']
     password = request.form['password']
 
-    user = valid_credentials(username, password)
+    user = valid_credentials(email, password)
     if user:
         session['user_id'] = user['id']
         return redirect(url_for('index'))

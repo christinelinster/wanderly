@@ -1,9 +1,8 @@
 
 CREATE TABLE users(
     id SERIAL PRIMARY KEY,
-    first_name varchar(100) NOT NULL,
-    last_name varchar(100) NOT NULL, 
-    username varchar(100) UNIQUE NOT NULL,
+    full_name varchar(255) NOT NULL, 
+    email varchar(255) UNIQUE NOT NULL,
     password text NOT NULL,
     created_at date NOT NULL DEFAULT now()
 );
