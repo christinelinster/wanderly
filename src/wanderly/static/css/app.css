@@ -1,16 +1,23 @@
 /* Root Variables */
 :root {
+  /* Colors */
   --primary-blue: #3b9fd9;
   --primary-orange: #e8956f;
+  --light-blue: #83ACD0;
   --text-dark: #1a1a1a;
   --text-gray: #888888;
+
+  /* Typography */
+  --font-title: 'Lavishly Yours', cursive;
+  --font-heading: 'Funnel Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Lato', -apple-system, BlinkMacSystemFont, 'sans-serif'
 }
 
 /* Background Gradient */
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Lato', sans-serif;
   min-height: 100vh;
   background: linear-gradient(
     to bottom right,
@@ -25,12 +32,24 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 1rem;
   margin-bottom: 40px;
 }
 
+.logo-icon {
+  color: var(--light-blue);
+  margin-top: 1rem;
+}
 
+.logo-text {
+  font-family: 'Lavishly Yours', cursive;
+  font-size: 4rem;
+  font-weight: 400;
+  background: linear-gradient(0.25turn, var(--primary-blue), var(--primary-orange), var(--primary-blue));
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 
+}
 
 
 .trip-card{

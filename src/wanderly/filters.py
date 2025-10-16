@@ -1,7 +1,6 @@
 def safe_default(value):
     return value if value else ''
 
-
 def formatted_date(date):
     return date.strftime("%b %d")
 
