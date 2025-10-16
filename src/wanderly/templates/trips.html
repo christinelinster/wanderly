@@ -2,31 +2,53 @@
 
 
 {% block header %}
+<div class="greeting">
+    <h1 class="greeting-title">Hello, {{ first_name }}</h1>
+    <p class="greeting-subtitle">Where are you wandering to?</p>
+</div>
 
-<h1>Hello, {{ first_name }}</h1>
-<h2>Where are you wandering to?</h2>
 {% endblock %}
 
-{% block content %}
-{% for trip in trips %}
-<a href="{{ url_for('trip_schedule', trip_id=trip.id) }}">
-    <div class="trip-card">
-        <img src="" alt="trip-image">
-        <div>
-            <h1>{{ trip.destination }}</h1>
-            <p>{{ trip.depart_date | formatted_title_date }} - {{ trip.return_date | formatted_title_date}}</p>
-        </div>
-    </div>
-</a>
-<form action="" method="post">
-    <button type="submit" value="{{ trip.id }}">Edit Trip</button>
-</form>
-<form class="delete-btn" action="{{ url_for('delete_trip', trip_id=trip.id) }}" method="post">
-    <button type="submit">Delete Trip</button>
-</form>
-{% endfor %}
 
-<button><a href="{{ url_for('plan_new_trip') }}">Plan New Adventure</a></button>
+{% block content %}
+<main class="trips-main">
+    <div class="trips-container">
+        {% for trip in trips %}
+        <div class="trip-card">
+            <a href="{{ url_for('trip_schedule', trip_id=trip.id) }}">
+                <div class="trip-icon">
+                   <i class="icon fa-solid fa-location-dot fa-lg"></i>
+                </div>
+
+                <div class="trip-info">
+                    <h2 class="trip-name">{{ trip.destination }}</h2>
+                    <div class="trip-dates">
+                        <i class="icon fa-regular fa-calendar"></i>
+                        <span class="trip-dates-text">{{ trip.depart_date | formatted_title_date }} - {{
+                            trip.return_date |
+                            formatted_title_date}}</span>
+                    </div>
+                </div>
+            </a>
+
+            <div class="trip-actions">
+                <form action="" method="post">
+                    <button class="btn-edit" type="submit" value="{{ trip.id }}">Edit Trip</button>
+                </form>
+                <form action="{{ url_for('delete_trip', trip_id=trip.id) }}" method="post">
+                    <button class="btn-delete" type="submit">Delete Trip</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+
+    <button><a href="{{ url_for('plan_new_trip') }}">Plan New Adventure</a></button>
+
+
+</main>
 
 
 {% endblock %}

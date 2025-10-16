@@ -22,19 +22,21 @@
 </head>
 
 <body>
-    <div class="logo">
-        <i class="logo-icon fa-regular fa-compass fa-2x fa-spin"></i>
-        <h1 class="logo-text">wanderly</h1>
-    </div>
-
     <header>
-        {% if session['user_id'] %}
-        <nav>
-            <form action="{{ url_for('signout') }}" method="post">
-                <button type="submit">Sign Out</button>
-            </form>
-        </nav>
-        {% endif %}
+        <div class="header-content">
+            <div class="logo">
+                <i class="logo-icon fa-regular fa-compass fa-2x fa-spin"></i>
+                <h1 class="logo-text">wanderly</h1>
+            </div>
+
+            {% if session['user_id'] %}
+            <nav class="header-nav">
+                <form action="{{ url_for('signout') }}" method="post">
+                    <button type="submit" class="btn-signout">Sign Out</button>
+                </form>
+            </nav>
+            {% endif %}
+        </div>
 
         {% block header %}
         {% endblock %}
