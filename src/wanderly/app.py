@@ -85,8 +85,9 @@ def show_signup_form():
 @app.route("/trips")
 def show_trips():
     trips = g.storage.get_trips_by_user(session['user_id'])
-    name = trips[0]['name']
-    first_name = name.split()[0]
+    name = g.storage.get_name_by_id(session['user_id'])['full_name']
+    if name:
+        first_name = name.split()[0]
     return render_template("trips.html", trips=trips, first_name=first_name)
 
 @app.route("/trips", methods=["POST"])

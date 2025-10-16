@@ -40,16 +40,16 @@ class Database:
                 trip = cursor.fetchone()
         return trip
     
-    def find_id_by_username(self, username):
-        query = 'SELECT id from users WHERE username = %s'
+    def get_name_by_id(self, user_id):
+        query = 'SELECT full_name from users WHERE id = %s'
         with self._database_connect() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(query, (username,))
-                user_id = cursor.fetchone()
-        return user_id[0]
+            with conn.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(query, (user_id,))
+                name = cursor.fetchone()
+        return name
 
     def get_user_credentials(self, email):
-        query = 'SELECT * FROM users WHERE email = %s'
+        query = 'SELECT * FROM users WHERE email ILIKE %s'
         with self._database_connect() as conn:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (email,))
