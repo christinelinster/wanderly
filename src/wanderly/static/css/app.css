@@ -56,11 +56,18 @@ body {
     border: 1px black solid
 }
 
-.itinerary-container{
+.itinerary{
     display: flex;
     flex-direction: column;
 }
 
+.day-header{
+  display: flex;
+}
+
+.day-activities{
+  display: flex;
+}
 
 .flash {
   max-width: 960px;

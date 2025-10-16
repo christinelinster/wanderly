@@ -83,6 +83,7 @@ def show_signup_form():
     return render_template("signup.html")
 
 @app.route("/trips")
+@require_logged_in_user
 def show_trips():
     trips = g.storage.get_trips_by_user(session['user_id'])
     name = g.storage.get_name_by_id(session['user_id'])['full_name']
@@ -91,6 +92,7 @@ def show_trips():
     return render_template("trips.html", trips=trips, first_name=first_name)
 
 @app.route("/trips", methods=["POST"])
+@require_logged_in_user
 def create_trip():
     destination = request.form['destination']
     start_date = request.form['start-date']
@@ -123,6 +125,7 @@ def trip_schedule(trip_id):
     return render_template("itinerary.html", plans_by_date=plans_by_date, trip=trip)
 
 @app.route("/trips/<int:trip_id>", methods=['POST'])
+@require_logged_in_user
 def delete_trip(trip_id):
     g.storage.delete_trip_by_id(trip_id)
     flash("The trip has been deleted", "success")
@@ -134,6 +137,7 @@ def plan_new_trip():
     return render_template("create_trip.html")
 
 @app.route("/signout", methods=["POST"])
+@require_logged_in_user
 def signout():
     session.clear()
     flash("You have been signed out")
