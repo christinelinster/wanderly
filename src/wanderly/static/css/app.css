@@ -51,12 +51,10 @@ body {
 
 }
 
-
 .trip-card{
     display: flex;
     border: 1px black solid
 }
-
 
 .itinerary-container{
     display: flex;

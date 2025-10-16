@@ -59,10 +59,7 @@ def load_db():
 @app.route("/")
 @require_logged_in_user
 def index():
-    trips = g.storage.get_trips_by_user(session['user_id'])
-    name = trips[0]['name']
-    first_name = name.split()[0]
-    return render_template("home.html", trips=trips, first_name=first_name)
+    return redirect(url_for('show_trips'))
 
 @app.route("/login")
 def show_login_form():
@@ -85,6 +82,28 @@ def login():
 def show_signup_form():
     return render_template("signup.html")
 
+@app.route("/trips")
+def show_trips():
+    trips = g.storage.get_trips_by_user(session['user_id'])
+    name = trips[0]['name']
+    first_name = name.split()[0]
+    return render_template("trips.html", trips=trips, first_name=first_name)
+
+@app.route("/trips", methods=["POST"])
+def create_trip():
+    destination = request.form['destination']
+    start_date = request.form['start-date']
+    end_date = request.form['end-date']
+
+    error = error_for_trips(start_date, end_date)
+    if error:
+        flash(error, "error")
+        return render_template("create_trip.html", destination=destination, start_date=start_date, end_date=end_date)
+
+    g.storage.create_new_trip(destination, start_date, end_date, session['user_id'])
+    flash('Your new adventure has been created', "success")
+    return redirect(url_for('index'))
+
 @app.route("/trips/<int:trip_id>")
 @require_logged_in_user
 def trip_schedule(trip_id):
@@ -102,25 +121,16 @@ def trip_schedule(trip_id):
 
     return render_template("itinerary.html", plans_by_date=plans_by_date, trip=trip)
 
+@app.route("/trips/<int:trip_id>", methods=['POST'])
+def delete_trip(trip_id):
+    g.storage.delete_trip_by_id(trip_id)
+    flash("The trip has been deleted", "success")
+    return redirect(url_for('index'))
+
 @app.route("/trips/new")
 @require_logged_in_user
 def plan_new_trip():
     return render_template("create_trip.html")
-
-@app.route("/trips", methods=["POST"])
-def create_trip():
-    destination = request.form['destination']
-    start_date = request.form['start-date']
-    end_date = request.form['end-date']
-
-    error = error_for_trips(start_date, end_date)
-    if error:
-        flash(error, "error")
-        return render_template("create_trip.html", destination=destination, start_date=start_date, end_date=end_date)
-
-    g.storage.create_new_trip(destination, start_date, end_date, session['user_id'])
-    flash('Your new adventure has been created', "success")
-    return redirect(url_for('index'))
 
 @app.route("/signout", methods=["POST"])
 def signout():

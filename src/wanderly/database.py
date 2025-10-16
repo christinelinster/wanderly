@@ -21,7 +21,6 @@ class Database:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (user_id,))
                 trips = cursor.fetchall()
-                print(trips)
         return trips
     
     def get_itinerary(self, trip_id):
@@ -33,7 +32,6 @@ class Database:
 
         return itinerary
     
-
     def find_trip_by_id(self, trip_id):
         query = 'SELECT * FROM trips WHERE id = %s'
         with self._database_connect() as conn:
@@ -63,3 +61,9 @@ class Database:
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(query, (destination, start_date, end_date, user_id,))
+    
+    def delete_trip_by_id(self, trip_id):
+        query = 'DELETE FROM trips WHERE id = %s'
+        with self._database_connect() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, (trip_id, ))

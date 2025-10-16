@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+
+
+{% block header %}
+
+<h1>Hello, {{ first_name }}</h1>
+<h2>Where are you wandering to?</h2>
+{% endblock %}
+
+{% block content %}
+{% for trip in trips %}
+<a href="{{ url_for('trip_schedule', trip_id=trip.id) }}">
+    <div class="trip-card">
+        <img src="" alt="trip-image">
+        <div>
+            <h1>{{ trip.destination }}</h1>
+            <p>{{ trip.depart_date | formatted_title_date }} - {{ trip.return_date | formatted_title_date}}</p>
+        </div>
+    </div>
+</a>
+<form action="" method="post">
+    <button type="submit" value="{{ trip.id }}">Edit Trip</button>
+</form>
+<form class="delete-btn" action="{{ url_for('delete_trip', trip_id=trip.id) }}" method="post">
+    <button type="submit">Delete Trip</button>
+</form>
+{% endfor %}
+
+<button><a href="{{ url_for('plan_new_trip') }}">Plan New Adventure</a></button>
+
+
+{% endblock %}
