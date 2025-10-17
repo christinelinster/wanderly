@@ -140,7 +140,7 @@ def plan_new_trip():
 @require_logged_in_user
 def signout():
     session.clear()
-    flash("You have been signed out")
+    flash("You have been signed out", "success")
     return redirect(url_for('show_login_form'))
 
 if __name__ == "__main__":
