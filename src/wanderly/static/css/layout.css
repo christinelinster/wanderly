@@ -1,0 +1,136 @@
+.header-content {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    position: relative;
+    margin-bottom: 5rem;
+}
+
+/* Logo Styles */
+
+.logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo-icon {
+    color: var(--light-blue);
+}
+
+.logo-text {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    font-weight: 500;
+    background: linear-gradient(0.25turn, var(--primary-blue), var(--primary-orange), var(--primary-blue));
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-nav {
+    margin-left: auto;
+    z-index: 10;
+}
+
+.btn-signout {
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+.btn-signout:hover {
+    color: var(--primary-blue);
+    transform: translateY(-2px);
+}
+
+
+.flash {
+    padding: 0.5rem;
+    width: 50%;
+    margin: 1rem auto;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.flash.success {
+    background-color: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    color: #2e7632;
+}
+
+.flash.error {
+    background-color: rgba(244, 67, 54, 0.1);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    color: #c62828;
+}
+
+.flash.info {
+    background-color: rgba(33, 150, 243, 0.1);
+    border: 1px solid rgba(33, 150, 243, 0.3);
+    color: #1565c0;
+}
+
+.flash p {
+    margin: 0;
+    font-family: var(--font-body);
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        padding: 1rem;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .logo {
+        position: static;
+        transform: none;
+        margin: 0;
+        gap: 0.5rem;
+    }
+
+    .logo>.logo-icon {
+        font-size: 1.5rem;
+    }
+
+    .logo-text {
+        font-size: 1.5rem;
+    }
+
+    .header-nav {
+        margin-left: 0;
+    }
+
+    .greeting-title {
+        font-size: 2.5rem;
+    }
+
+    .greeting-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .flash {
+        margin: 1rem;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .btn-signout {
+        font-size: 0.85rem;
+    }
+}

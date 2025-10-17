@@ -3,7 +3,7 @@
 
 {% block header %}
 <div class="greeting">
-    <h1 class="greeting-title">Hello, {{ first_name }}</h1>
+    <h1 class="greeting-title">Hello, <span class="greeting-name">{{ first_name }}</span></h1>
     <p class="greeting-subtitle">Where are you wandering to?</p>
 </div>
 
@@ -43,9 +43,13 @@
 
 </div>
 
+<a href="{{ url_for('plan_new_trip') }}">
+    <button class="btn-create">
+   Plan New Adventure
+    </button> 
+</a>
 
-<button class="btn-create"><a href="{{ url_for('plan_new_trip') }}">Plan New Adventure</a></button>
 
 
 
-{% endblock %}
+    {% endblock %}

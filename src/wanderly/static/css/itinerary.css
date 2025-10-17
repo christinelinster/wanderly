@@ -1,0 +1,13 @@
+
+.itinerary {
+  display: flex;
+  flex-direction: column;
+}
+
+.day-header {
+  display: flex;
+}
+
+.day-activities {
+  display: flex;
+}
