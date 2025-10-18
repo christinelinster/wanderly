@@ -47,7 +47,7 @@ def require_logged_in_user(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not user_logged_in():
-            flash("Please sign for access.")
+            flash("Please sign for access.", "info")
             return redirect(url_for('show_login_form'))
         return f(*args, **kwargs)
     return decorated_function
@@ -94,11 +94,11 @@ def show_trips():
 @app.route("/trips", methods=["POST"])
 @require_logged_in_user
 def create_trip():
-    destination = request.form['destination']
+    destination = request.form['destination'].strip()
     start_date = request.form['start-date']
     end_date = request.form['end-date']
 
-    error = error_for_trips(start_date, end_date)
+    error = error_for_trips(destination, start_date, end_date)
     if error:
         flash(error, "error")
         return render_template("create_trip.html", destination=destination, start_date=start_date, end_date=end_date)

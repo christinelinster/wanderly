@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/trips.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/create-trip.css')}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/itinerary.css') }}">
 
     <!-- Scripts -->
@@ -28,7 +29,6 @@
 <body>
 
     <header>
-
         {% if session['user_id'] %}
         <div class="header-content">
             <div class="logo">

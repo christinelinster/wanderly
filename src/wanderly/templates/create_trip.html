@@ -1,23 +1,27 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<a href="{{ url_for('index') }}">Back to Trips</a>
 
-<div>
-    <h1>Plan New Adventure</h1>
-    <p>Where will your next journey take you? Add the details below to start planning.</p>
-    <form action="{{ url_for('create_trip')}}" method="post">
-        <label for="destination">Trip Name</label>
-        <input type="text" name="destination" placeholder="e.g., Summer in Taiwan" value="{{ destination }}">
+<main class="new-trip-main">
+    <div class="new-trip-container">
+        <a class="home-redirect" href="{{ url_for('index') }}">
+            <i class="icon fa-solid fa-arrow-left"></i>
+            Back to Trips
+        </a>
+        <div class="new-trip-greeting">
+            <h2 class="title">Plan Your Next Adventure</h2>
+            <p class="subtitle">Where will your next journey take you? Add the details below to start planning.</p>
+        </div>
+        <div class="new-trip-form">
+            <form class="new-trip-info" action="{{ url_for('create_trip')}}" method="post">
+                <input class="destination" type="text" name="destination" value="{{ destination }}" placeholder="Trip Name">
+                <input type="date" name="start-date" value="{{ start_date }}" placeholder="Start Date">
+                <input type="date" name="end-date" value="{{ end_date }}" placeholder="End Date">
 
-        <label for="start-date">Start Date</label>
-        <input type="date" name="start-date" value="{{ start_date }}">
+                <button class="btn-submit" type="submit">Create Trip</button>
+            </form>
+        </div>
 
-        <label for="end-date">End Date</label>
-        <input type="date" name="end-date" value="{{ end_date }}">
-
-        <button type="submit">Create Trip</button>
-    </form>
-</div>
-
+    </div>
+</main>
 {% endblock %}

@@ -1,0 +1,67 @@
+.new-trip-main {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    flex: 1;
+}
+
+.new-trip-container {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+    padding: 1rem;
+}
+
+.new-trip-greeting {
+    padding: 2rem 0;
+}
+
+.new-trip-greeting .title {
+    margin: 0 0 0.5rem;
+}
+
+.new-trip-greeting .subtitle {
+    margin: 0;
+    color: var(--text-gray);
+}
+
+
+.new-trip-info {
+    display: flex;
+    gap: 1rem;
+}
+
+@media (max-width: 864px) {
+    .new-trip-info {
+        flex-direction: column;
+    }
+}
+
+.new-trip-info .destination{
+    min-width: 15rem;
+}
+
+.new-trip-info input {
+    padding: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    font-family: var(--font-body);
+}
+
+.new-trip-info input:focus {
+    outline: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+
+.home-redirect{
+    text-decoration: none;
+    color: var(--primary-blue)
+}
+
+.home-redirect:hover{
+    color: var(--primary-orange)
+}
+
+.home-redirect .icon{
+    margin-right: 0.5rem;
+}
