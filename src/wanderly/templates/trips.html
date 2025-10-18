@@ -6,50 +6,48 @@
     <h1 class="greeting-title">Hello, <span class="greeting-name">{{ first_name }}</span></h1>
     <p class="greeting-subtitle">Where are you wandering to?</p>
 </div>
-
 {% endblock %}
 
 
 {% block content %}
-<div class="trips-container">
-    {% for trip in trips %}
-    <div class="trip-card">
-        <a href="{{ url_for('trip_schedule', trip_id=trip.id) }}">
-            <div class="trip-icon">
-                <i class="icon fa-solid fa-location-dot fa-lg"></i>
-            </div>
-
-            <div class="trip-info">
-                <h2 class="trip-name">{{ trip.destination }}</h2>
-                <div class="trip-dates">
-                    <i class="icon fa-regular fa-calendar"></i>
-                    <span class="trip-dates-text">{{ trip.depart_date | formatted_title_date }} - {{
-                        trip.return_date |
-                        formatted_title_date}}</span>
+<main class="trips-main">
+    <div class="trips-container">
+        {% for trip in trips %}
+        <div class="trip-card">
+            <a href="{{ url_for('trip_schedule', trip_id=trip.id) }}">
+                <div class="trip-icon">
+                    <i class="icon fa-solid fa-location-dot fa-lg"></i>
                 </div>
+
+                <div class="trip-info">
+                    <h2 class="trip-name">{{ trip.destination }}</h2>
+                    <div class="trip-dates">
+                        <i class="icon fa-regular fa-calendar"></i>
+                        <span class="trip-dates-text">{{ trip.depart_date | formatted_title_date }} - {{
+                            trip.return_date |
+                            formatted_title_date}}</span>
+                    </div>
+                </div>
+            </a>
+
+            <div class="trip-actions">
+                <form action="" method="post">
+                    <button class="btn-edit" type="submit"><i class="icon fa-solid fa-pen"></i></button>
+                </form>
+                <form action="{{ url_for('delete_trip', trip_id=trip.id) }}" method="post">
+                    <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
+                </form>
             </div>
-        </a>
-
-        <div class="trip-actions">
-            <form action="" method="post">
-                <button class="btn-edit" type="submit"><i class="icon fa-solid fa-pen"></i></button>
-            </form>
-            <form action="{{ url_for('delete_trip', trip_id=trip.id) }}" method="post">
-                <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
-            </form>
         </div>
+        {% endfor %}
+
     </div>
-    {% endfor %}
 
-</div>
+    <a href="{{ url_for('plan_new_trip') }}">
+        <button class="btn-create">
+            Plan New Adventure
+        </button>
+    </a>
 
-<a href="{{ url_for('plan_new_trip') }}">
-    <button class="btn-create">
-   Plan New Adventure
-    </button> 
-</a>
-
-
-
-
-    {% endblock %}
+</main>
+{% endblock %}

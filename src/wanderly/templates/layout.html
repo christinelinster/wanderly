@@ -14,6 +14,7 @@
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/trips.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/itinerary.css') }}">
@@ -25,21 +26,24 @@
 </head>
 
 <body>
+
     <header>
+
+        {% if session['user_id'] %}
         <div class="header-content">
             <div class="logo">
                 <i class="logo-icon fa-regular fa-compass fa-2x fa-spin"></i>
                 <h1 class="logo-text">wanderly</h1>
             </div>
 
-            {% if session['user_id'] %}
             <nav class="header-nav">
                 <form action="{{ url_for('signout') }}" method="post">
                     <button type="submit" class="btn-signout">Sign Out</button>
                 </form>
             </nav>
-            {% endif %}
+
         </div>
+        {% endif %}
 
         {% block header %}
         {% endblock %}
@@ -54,10 +58,10 @@
         {% endif %}
         {% endwith %}
     </header>
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+    {% block content %}
+    {% endblock %}
+
+
 </body>
 
 </html>

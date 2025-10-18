@@ -1,22 +1,29 @@
 {% extends 'layout.html' %}
 
-{% block header %}
- <h2>Welcome Back</h2>
-<p>Login to continue your adventures!</p>
-{% endblock%}
 
 {% block content %}
-<div>
-    <form action="" method="post">
+<main class="auth-main">
+    <div class="auth-container">
+        <div class="auth-logo">
+            <i class="logo-icon fa-regular fa-compass fa-2x fa-spin"></i>
+            <h1 class="logo-text">wanderly</h1>
+        </div>
+        <div class="auth-greeting">
+            <h2 class="auth-title">Welcome Back</h2>
+            <p class="auth-subtitle">Login to continue your adventures!</p>
+        </div>
+        <div class="auth-form">
+            <form class="auth-info" action="{{ url_for('login') }}" method="post">
 
-        <label for="email">Email:</label>
-        <input type="email" name="email" placeholder="yourname@email.com">
+                <input type="email" name="email" placeholder="Email">
+                <input type="password" name="password" placeholder="Password">
 
-        <label for="password">Password:</label>
-        <input type="password" name="password">
+                <button class="btn-submit" type="submit">Login</button>
+            </form>
+        </div>
 
-        <button type="submit">Login</button>
-    </form>
-     <p>Don't have an account? <a href="{{ url_for('show_signup_form')}}">Sign Up</a></p>
-</div>
+        <p class="auth-redirect">Don't have an account? <a href="{{ url_for('show_signup_form')}}">Sign Up</a></p>
+    </div>
+</main>
+
 {% endblock %}

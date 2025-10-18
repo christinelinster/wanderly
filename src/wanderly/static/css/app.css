@@ -4,6 +4,7 @@
   --primary-blue: #3b9fd9;
   --primary-orange: #e8956f;
   --light-blue: #83ACD0;
+  --dark-blue:#17598c;
   --text-dark: #1a1a1a;
   --text-gray: #888888;
 
@@ -14,9 +15,17 @@
 }
 
 /* Background Gradient */
+
+html,
 body {
+  overscroll-behavior: none;
   margin: 0;
-  padding: 3rem 5rem;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
   font-family: 'Lato', sans-serif;
   min-height: 100vh;
   min-width: 320px;
@@ -25,7 +34,9 @@ body {
       #e8d4c8 50%,
       #f5e6d3 100%);
   box-sizing: border-box;
+  padding: 3rem 5rem;
 }
+
 
 @media (max-width: 768px) {
   body {
@@ -39,16 +50,8 @@ body {
   }
 }
 
-main {
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  width: 100%;
-  align-items: center;
-}
-
 .btn-edit,
-.btn-delete{
+.btn-delete {
   padding: 0.5rem;
   border: none;
   border-radius: 6px;
@@ -58,7 +61,7 @@ main {
 
 }
 
-.btn-create{
+.btn-create {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 6px;
@@ -68,6 +71,18 @@ main {
   text-decoration: none;
   font-family: var(--font-body);
   color: var(--text-dark);
+}
+
+.btn-submit {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background: var(--primary-blue);
+  text-decoration: none;
+  font-family: var(--font-body);
+  color: #fff;
 }
 
 .btn-edit:hover {
@@ -83,4 +98,8 @@ main {
 .btn-create:hover {
   background: var(--primary-orange);
   color: white;
+}
+
+.btn-submit:hover{
+  background:var(--dark-blue)
 }
