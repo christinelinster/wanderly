@@ -12,6 +12,11 @@
 {% block content %}
 <main class="trips-main">
     <div class="trips-container">
+        {% if not trips %}
+        <p>You currently have no trips planned.</p>
+
+        {% endif %}
+
         {% for trip in trips %}
         <div class="trip-card">
             <a href="{{ url_for('trip_schedule', trip_id=trip.id) }}">

@@ -12,8 +12,8 @@
             <p class="auth-subtitle">Create an account to plan your adventures!</p>
         </div>
         <div class="auth-form">
-            <form class="auth-info" action="" method="post">
-                <input type="text" name="name" placeholder="Full Name">
+            <form class="auth-info" action="{{ url_for('create_user')}}" method="post">
+                <input type="text" name="name" value="{{ name }}"placeholder="Full Name">
                 <input type="email" name="email" placeholder="Email">
                 <input type="password" name="password" placeholder="Password">
 

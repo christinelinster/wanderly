@@ -17,6 +17,7 @@ from filters import (
     )
 from utils import (
     error_for_trips,
+    error_for_create_user
 )
 
 from functools import wraps
@@ -35,8 +36,9 @@ app.jinja_env.filters['formatted_time'] = formatted_time
 def valid_credentials(email, password):
     user = g.storage.get_user_credentials(email)
     if user:
+        curr_password = password.encode('utf-8')
         stored_password = user["password"].encode('utf-8')
-        if bcrypt.checkpw(password.encode('utf-8'), stored_password):
+        if bcrypt.checkpw(curr_password, stored_password):
             return user
     return None
 
@@ -55,6 +57,8 @@ def require_logged_in_user(f):
 @app.before_request
 def load_db():
     g.storage = Database()
+
+
 
 @app.route("/")
 @require_logged_in_user
@@ -81,6 +85,27 @@ def login():
 @app.route("/signup")
 def show_signup_form():
     return render_template("signup.html")
+
+@app.route("/signup", methods=["POST"])
+def create_user():
+    name = request.form['name']
+    email = request.form['email']
+    password = request.form['password']
+
+    error = error_for_create_user(name, email, password)
+    if error:
+        flash(error, "error")
+        return render_template("signup.html")
+    
+    if g.storage.user_exists(email):
+        flash("The email is already in use.", "error")
+        return render_template('signup.html', name=name)
+    
+    hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    
+    g.storage.create_new_user(name, email, hash.decode('utf-8'))
+    flash("User has been created", "success")
+    return redirect(url_for('login'))
 
 @app.route("/trips")
 @require_logged_in_user

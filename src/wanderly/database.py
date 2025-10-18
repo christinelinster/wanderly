@@ -55,6 +55,15 @@ class Database:
                 cursor.execute(query, (email,))
                 user = cursor.fetchone()
         return user 
+    
+    def user_exists(self, email):
+        return True if self.get_user_credentials(email) else False
+
+    def create_new_user(self, name, email, password):
+        query = 'INSERT INTO users (full_name, email, password) VALUES (%s, %s, %s)'
+        with self._database_connect() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, (name, email, password,))
 
     def create_new_trip(self, destination, start_date, end_date, user_id ):
         query = 'INSERT INTO trips (destination, depart_date, return_date, user_id) VALUES(%s, %s, %s, %s)'
