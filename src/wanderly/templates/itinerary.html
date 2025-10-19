@@ -20,14 +20,23 @@
             </div>
 
             <div class="trip-actions">
-                <form action="" method="post">
+                <form action="">
                     <button class="btn-edit" type="submit"><i class="icon fa-solid fa-pen"></i></button>
                 </form>
                 <form action="{{ url_for('delete_trip', trip_id=trip.id) }}" method="post">
                     <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
                 </form>
+
             </div>
+
         </div>
+        <div class="trip-add-day">
+            <form action="">
+                <button class="btn-create">+ Add Day</button>
+            </form>
+
+        </div>
+
 
         <div class="itinerary">
             {% if not plans_by_date.items() %}
@@ -37,52 +46,68 @@
 
             {% for date, activities in plans_by_date.items() %}
             <div class="itinerary-day">
-                <div class="day-header">
-                    <div class="day-info">
-                        <h3 class="day-title">{{ date | formatted_date }}</h3>
+                <div class="itinerary-card">
+                    <div class="day-header">
+                        <div class="day-info">
+                            <h3 class="day-title">{{ date | formatted_date }}</h3>
+                        </div>
+                        <div class="trip-actions">
+                            <form action="">
+                                <button class="btn-edit" type="submit"><i class="icon fa-solid fa-pen"></i></button>
+                            </form>
+                            <form action="">
+                                <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="day-actions">
-                        <form action="" method="post">
-                            <button type="submit">+ Add Activity</button>
+
+                    <div class="day-activities">
+                        <div class="activity-label">
+                            <p>Time</p>
+                            <p>Activity</p>
+                            <p>Description</p>
+                            <p>Cost</p>
+                            <p>Actions</p>
+                        </div>
+                        {% for act in activities %}
+                        <div class="activity">
+
+                            <p class="activity-time">{{ act.activity_time | formatted_time}}</p>
+                            <p class="activity-title"> {{ act.activity }}</p>
+
+                            <p class="activity-note">{{ act.note }}</p>
+                            <p class="activity-cost">{{ act.cost }}</p>
+
+                            <div class="trip-actions">
+                                <form action="" method="post">
+                                    <button class="btn-edit" type="submit"><i class="icon fa-solid fa-pen"></i></button>
+                                </form>
+                                <form action="" method="post">
+                                    <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
+                                </form>
+
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        <form class="day-actions" action="" method="post">
+                            <input type="time" name="time">
+                            <input type="text" name="activity" placeholder="Add Activity">
+                            <input type="text" name="note" placeholder="Description">
+                            <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" name="cost"
+                                placeholder="$">
+                            <button class="btn-create" type="submit">+ Add</button>
                         </form>
-                        <form action="" method="post">
-                            <button type="submit">Edit</button>
-                        </form>
-                        <form action="" method="post">
-                            <button type="submit">Delete Day</button>
-                        </form>
+
+
                     </div>
+
+
                 </div>
 
-                <div class="day-activities">
-                    {% for act in activities %}
-                    <div class="activity">
-                        <div class="activity-header">
-                            <span class="activity-time">{{ act.activity_time | formatted_time}}</span>
-                            <h4 class="activity-title"> {{ act.activity }}</h4>
-                        </div>
-                        <p>{{ act.note }}</p>
-                        <div class="activity-meta">
-                            <span class="activity-cost">{{ act.cost }}</span>
-                        </div>
-                        <div class="activity-actions">
-                            <form action="" method="post">
-                                <button type="submit">Edit</button>
-                            </form>
-                            <form action="" method="post">
-                                <button type="submit">Delete</button>
-                            </form>
-
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
             </div>
             {% endfor %}
 
-            <form action="" method="post">
-                <button class="btn-add-day">+ Add Day</button>
-            </form>
         </div>
 
     </div>
