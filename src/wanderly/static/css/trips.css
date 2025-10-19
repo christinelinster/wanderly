@@ -81,25 +81,6 @@
     max-width: 100%;
 }
 
-@media(max-width: 480px) {
-    .trip-card {
-        flex-wrap: wrap;
-        padding: 0.75rem 0.5rem;
-    }
-
-    .trip-name {
-        font-size: 1.1rem;
-    }
-
-    .trip-dates {
-        font-size: 0.85rem
-    }
-
-    .trip-dates-text {
-        white-space: normal;
-    }
-}
-
 
 .trip-card:hover {
     transform: translate(-2px);
@@ -168,6 +149,7 @@
     align-items: center;
     color: var(--text-gray);
     font-size: 0.9rem;
+    letter-spacing: 0.5px;
 }
 
 .trip-dates-text {
@@ -184,4 +166,24 @@
 
 .trip-actions form {
     margin: 0;
+}
+
+
+@media(max-width: 480px) {
+    .trip-card {
+        flex-wrap: wrap;
+        padding: 0.75rem 0.5rem;
+    }
+
+    .trip-name {
+        font-size: 1.1rem;
+    }
+
+    .trip-dates {
+        font-size: 0.85rem
+    }
+
+    .trip-dates-text {
+        white-space: normal;
+    }
 }

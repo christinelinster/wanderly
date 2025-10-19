@@ -140,8 +140,7 @@ def trip_schedule(trip_id):
     plans_by_date = {}
 
     for activity in schedule: 
-        date = activity['activity_date']
-
+        date = activity['activity_date'] or 'No Dates'
         if date not in plans_by_date:
             plans_by_date[date] = []
 

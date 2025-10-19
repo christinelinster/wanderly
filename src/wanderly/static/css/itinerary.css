@@ -1,13 +1,30 @@
+.trip-main {
+  display: flex;
+  width: 100%;
+}
 
-.itinerary {
+.trip-container {
   display: flex;
   flex-direction: column;
 }
 
-.day-header {
+.trip-header {
   display: flex;
+  gap: 1rem;
+  padding: 2rem 0;
+  align-items: flex-start;
 }
 
-.day-activities {
-  display: flex;
+.trip-title {
+  margin: 0;
+}
+
+.trip-dates {
+  margin: 0.5rem 0;
+  color: var(--text-gray);
+}
+
+.itinerary{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
 }

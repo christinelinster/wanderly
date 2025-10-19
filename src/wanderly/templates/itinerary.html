@@ -1,83 +1,92 @@
 {% extends 'layout.html' %}
-
-
-{% block header %}
-<a href="{{ url_for('index') }}">Back to Trips</a>
-
-{% endblock%}
-
 {% block content %}
-<div class="trip-container">
 
-    <div class="trip-header">
-        <h2 class="trip-title">{{ trip.destination }}</h2>
-        <p class="trip-dates">{{ trip.depart_date | formatted_title_date }} to {{ trip.return_date |
-            formatted_title_date }}</p>
-        <div class="trip-actions">
-            <form action="" method="post">
-                <button type="submit">Edit</button>
-            </form>
-            <form action="{{ url_for('delete_trip', trip_id = trip.id )}}" method="post">
-                <button type="submit">Delete</button>
-            </form>
-        </div>
-    </div>
+<main class="trip-main">
+    <div class="trip-container">
+        <a class="home-redirect" href="{{ url_for('index') }}">
+            <i class="icon fa-solid fa-arrow-left"></i>
+            Back to Trips
+        </a>
 
-    <div class="itinerary">
-        {% if not plans_by_date.items() %}
-        <p>You do not have plans yet!</p>
-        {% endif %}
-
-
-        {% for date, activities in plans_by_date.items() %}
-        <div class="itinerary-day">
-            <div class="day-header">
-                <div class="day-info">
-                    <h3 class="day-title">{{ date | formatted_date }}</h3>
-                </div>
-                <div class="day-actions">
-                    <form action="" method="post">
-                        <button type="submit">+ Add Activity</button>
-                    </form>
-                    <form action="" method="post">
-                        <button type="submit">Edit</button>
-                    </form>
-                    <form action="" method="post">
-                        <button type="submit">Delete Day</button>
-                    </form>
+        <div class="trip-header">
+            <div>
+                <h2 class="trip-title">{{ trip.destination }}</h2>
+                <div class="trip-dates">
+                    <i class="icon fa-regular fa-calendar"></i>
+                    <span class="trip-dates-text">{{ trip.depart_date | formatted_title_date }} - {{
+                        trip.return_date |
+                        formatted_title_date}}</span>
                 </div>
             </div>
-            
-            <div class="day-activities">
-                {% for act in activities %}
-                <div class="activity">
-                    <div class="activity-header">
-                        <span class="activity-time">{{ act.activity_time | formatted_time}}</span>
-                        <h4 class="activity-title"> {{ act.activity }}</h4>
+
+            <div class="trip-actions">
+                <form action="" method="post">
+                    <button class="btn-edit" type="submit"><i class="icon fa-solid fa-pen"></i></button>
+                </form>
+                <form action="{{ url_for('delete_trip', trip_id=trip.id) }}" method="post">
+                    <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
+                </form>
+            </div>
+        </div>
+
+        <div class="itinerary">
+            {% if not plans_by_date.items() %}
+            <p>You do not have plans yet!</p>
+            {% endif %}
+
+
+            {% for date, activities in plans_by_date.items() %}
+            <div class="itinerary-day">
+                <div class="day-header">
+                    <div class="day-info">
+                        <h3 class="day-title">{{ date | formatted_date }}</h3>
                     </div>
-                    <p>{{ act.note }}</p>
-                    <div class="activity-meta">
-                        <span class="activity-cost">{{ act.cost }}</span>
-                    </div>
-                    <div class="activity-actions">
+                    <div class="day-actions">
+                        <form action="" method="post">
+                            <button type="submit">+ Add Activity</button>
+                        </form>
                         <form action="" method="post">
                             <button type="submit">Edit</button>
                         </form>
                         <form action="" method="post">
-                            <button type="submit">Delete</button>
+                            <button type="submit">Delete Day</button>
                         </form>
-
                     </div>
                 </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endfor %}
 
-        <form action="" method="post">
-            <button class="btn-add-day">+ Add Day</button>
-        </form>
+                <div class="day-activities">
+                    {% for act in activities %}
+                    <div class="activity">
+                        <div class="activity-header">
+                            <span class="activity-time">{{ act.activity_time | formatted_time}}</span>
+                            <h4 class="activity-title"> {{ act.activity }}</h4>
+                        </div>
+                        <p>{{ act.note }}</p>
+                        <div class="activity-meta">
+                            <span class="activity-cost">{{ act.cost }}</span>
+                        </div>
+                        <div class="activity-actions">
+                            <form action="" method="post">
+                                <button type="submit">Edit</button>
+                            </form>
+                            <form action="" method="post">
+                                <button type="submit">Delete</button>
+                            </form>
+
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <form action="" method="post">
+                <button class="btn-add-day">+ Add Day</button>
+            </form>
+        </div>
+
     </div>
 
-</div>
+</main>
+
 {% endblock%}

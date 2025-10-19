@@ -12,15 +12,15 @@
     padding: 1rem;
 }
 
-.new-trip-greeting {
+.new-trip-header {
     padding: 2rem 0;
 }
 
-.new-trip-greeting .title {
+.new-trip-header .title {
     margin: 0 0 0.5rem;
 }
 
-.new-trip-greeting .subtitle {
+.new-trip-header .subtitle {
     margin: 0;
     color: var(--text-gray);
 }
