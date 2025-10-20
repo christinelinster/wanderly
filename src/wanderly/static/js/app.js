@@ -1,7 +1,7 @@
 'use strict'
 
-document.addEventListener('DOMContentLoaded', () => {
-    let forms = document.querySelectorAll('form.delete-btn')
+document.addEventListener('DOMContentLoaded', function() {
+    let forms = document.querySelectorAll('form.delete');
     forms.forEach(form => {
         form.addEventListener('submit', function (event) {
             event.preventDefault();

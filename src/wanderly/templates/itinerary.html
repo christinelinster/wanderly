@@ -23,7 +23,7 @@
                 <form action="">
                     <button class="btn-edit" type="submit"><i class="icon fa-solid fa-pen"></i></button>
                 </form>
-                <form action="{{ url_for('delete_trip', trip_id=trip.id) }}" method="post">
+                <form class="delete" action="{{ url_for('delete_trip', trip_id=trip.id) }}" method="post">
                     <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
                 </form>
 
@@ -40,7 +40,7 @@
 
         <div class="itinerary">
             {% if not plans_by_date.items() %}
-            <p>You do not have plans yet!</p>
+            <p>You don't have any plans yet!</p>
             {% endif %}
 
 

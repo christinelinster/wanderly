@@ -101,7 +101,7 @@ def create_user():
     
     if g.storage.user_exists(email):
         flash("The email is already in use.", "error")
-        return render_template('signup.html', name=name)
+        return render_template('signup.html')
     
     hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     
@@ -131,7 +131,7 @@ def show_trip_to_edit(trip_id):
 @app.route("/trips/edit/<int:trip_id>", methods=["POST"])
 @require_logged_in_user
 def edit_trip(trip_id):
-    destination = request.form['destination']
+    destination = request.form['destination'].strip()
     start_date = request.form['start_date']
     end_date = request.form['end_date']
 
