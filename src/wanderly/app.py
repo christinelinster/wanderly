@@ -49,6 +49,7 @@ def require_logged_in_user(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not user_logged_in():
+            session['next'] = request.full_path
             flash("Please sign for access.", "info")
             return redirect(url_for('show_login_form'))
         return f(*args, **kwargs)
@@ -57,8 +58,6 @@ def require_logged_in_user(f):
 @app.before_request
 def load_db():
     g.storage = Database()
-
-
 
 @app.route("/")
 @require_logged_in_user
@@ -75,12 +74,15 @@ def login():
     password = request.form['password']
 
     user = valid_credentials(email, password)
+    
     if user:
         session['user_id'] = user['id']
-        return redirect(url_for('index'))
-    else:
-        flash("Invalid credentials", "error")
-        return render_template("login.html"), 401
+        next_page = session.pop('next', None)
+        if not next_page:
+            next_page = url_for('index')
+        return redirect(next_page)
+    flash("Invalid credentials", "error")
+    return render_template("login.html"), 401
 
 @app.route("/signup")
 def show_signup_form():
@@ -116,6 +118,32 @@ def show_trips():
         first_name = name.split()[0]
     return render_template("trips.html", trips=trips, first_name=first_name)
 
+@app.route("/trips/edit/<int:trip_id>", methods=["GET"])
+@require_logged_in_user
+def show_trip_to_edit(trip_id):
+    trips = g.storage.get_trips_by_user(session['user_id'])
+    name = g.storage.get_name_by_id(session['user_id'])['full_name']
+    if name:
+        first_name = name.split()[0]
+    return render_template("trips.html", trips=trips, first_name=first_name, edit_trip_id=trip_id)
+
+# Need to validate and sanitize input 
+@app.route("/trips/edit/<int:trip_id>", methods=["POST"])
+@require_logged_in_user
+def edit_trip(trip_id):
+    destination = request.form['destination']
+    start_date = request.form['start_date']
+    end_date = request.form['end_date']
+
+    error = error_for_trips(destination, start_date, end_date)
+    if error:
+        flash(error, "error")
+        return redirect(url_for('show_trip_to_edit', trip_id=trip_id))
+
+    g.storage.edit_trip_heading(destination, start_date, end_date, trip_id)
+    flash("Trip successfully edited.", "success")
+    return redirect(url_for('index'))
+
 @app.route("/trips", methods=["POST"])
 @require_logged_in_user
 def create_trip():
@@ -136,17 +164,20 @@ def create_trip():
 @require_logged_in_user
 def trip_schedule(trip_id):
     trip = g.storage.find_trip_by_id(trip_id)
-    schedule = g.storage.get_itinerary(trip_id)
-    plans_by_date = {}
+    if trip: 
+        schedule = g.storage.get_itinerary(trip_id)
+        plans_by_date = {}
 
-    for activity in schedule: 
-        date = activity['activity_date'] or 'No Dates'
-        if date not in plans_by_date:
-            plans_by_date[date] = []
+        for activity in schedule: 
+            date = activity['activity_date'] or 'No Dates'
+            if date not in plans_by_date:
+                plans_by_date[date] = []
 
-        plans_by_date[date].append(activity)
+            plans_by_date[date].append(activity)
 
-    return render_template("itinerary.html", plans_by_date=plans_by_date, trip=trip)
+        return render_template("itinerary.html", plans_by_date=plans_by_date, trip=trip)
+    flash("The trip does not exist.", "error")
+    return redirect(url_for('index'))
 
 @app.route("/trips/<int:trip_id>", methods=['POST'])
 @require_logged_in_user

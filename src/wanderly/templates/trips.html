@@ -14,10 +14,39 @@
     <div class="trips-container">
         {% if not trips %}
         <p>You currently have no trips planned.</p>
-
         {% endif %}
 
         {% for trip in trips %}
+        {% if edit_trip_id and edit_trip_id == trip.id %}
+
+
+        <form class="edit-trip-form" action="{{ url_for('edit_trip', trip_id=trip.id)}}" method="post">
+            <div class="trip-icon">
+                <i class="icon fa-solid fa-location-dot fa-lg"></i>
+            </div>
+
+            <div class="trip-info">
+
+                <h2 class="trip-name"><input value="{{ trip.destination }}" type="text" name="destination"></h2>
+                <div class="trip-dates">
+                    <i class="icon fa-regular fa-calendar"></i>
+                    <span class="trip-dates-text">
+                        <input value="{{trip.depart_date }}" type="date" name="start_date">
+                        -
+                        <input value="{{ trip.return_date }}" type="date" name="end_date">
+                    </span>
+                </div>
+            </div>
+
+            <div class="trip-actions">
+                <button class="btn-create" type="submit">Save</button>
+            </div>
+        </form>
+
+
+
+        {% else %}
+
         <div class="trip-card">
             <a href="{{ url_for('trip_schedule', trip_id=trip.id) }}">
                 <div class="trip-icon">
@@ -36,7 +65,7 @@
             </a>
 
             <div class="trip-actions">
-                <form action="" method="post">
+                <form action="{{ url_for('show_trip_to_edit', trip_id=trip.id)}}" method="get">
                     <button class="btn-edit" type="submit"><i class="icon fa-solid fa-pen"></i></button>
                 </form>
                 <form action="{{ url_for('delete_trip', trip_id=trip.id) }}" method="post">
@@ -44,6 +73,7 @@
                 </form>
             </div>
         </div>
+        {% endif %}
         {% endfor %}
 
     </div>

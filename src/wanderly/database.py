@@ -76,3 +76,9 @@ class Database:
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(query, (trip_id, ))
+
+    def edit_trip_heading(self, destination, start_date, end_date, trip_id):
+        query = 'UPDATE trips SET destination = %s, depart_date = %s, return_date = %s WHERE id = %s'
+        with self._database_connect() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, (destination, start_date, end_date, trip_id))

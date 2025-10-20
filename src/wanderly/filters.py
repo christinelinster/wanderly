@@ -5,7 +5,7 @@ def formatted_date(date):
     return date if isinstance(date, str) else date.strftime("%b %d")
 
 def formatted_title_date(date):
-    return date.strftime("%b %d, %Y")
+    return date.strftime("%b %d, %Y") if date else 'No Dates Yet'
 
 def formatted_time(time):
     return time.strftime("%I:%M %p") if time else ''
