@@ -7,6 +7,8 @@ CREATE TABLE users(
     created_at date NOT NULL DEFAULT now()
 );
 
+-- ADD A DATES TABLE? 
+
 CREATE TABLE trips(
     id serial PRIMARY KEY,
     destination text NOT NULL, 

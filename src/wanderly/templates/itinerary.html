@@ -30,19 +30,18 @@
             </div>
 
         </div>
+
         <div class="trip-add-day">
             <form action="">
-                <button class="btn-create">+ Add Day</button>
+                <button class="btn-create">+ Add Plan</button>
             </form>
-
         </div>
 
 
         <div class="itinerary">
             {% if not plans_by_date.items() %}
-            <p>You don't have any plans yet!</p>
+                <p>You don't have any plans yet!</p>
             {% endif %}
-
 
             {% for date, activities in plans_by_date.items() %}
             <div class="itinerary-day">
@@ -52,10 +51,7 @@
                             <h3 class="day-title">{{ date | formatted_date }}</h3>
                         </div>
                         <div class="trip-actions">
-                            <form action="">
-                                <button class="btn-edit" type="submit"><i class="icon fa-solid fa-pen"></i></button>
-                            </form>
-                            <form action="">
+                            <form action="{{ url_for('delete_trip_day', trip_id=trip.id, day='no_date' if date=='No Dates' else date) }}" method="post">
                                 <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
                             </form>
                         </div>
@@ -98,20 +94,12 @@
                                 placeholder="$">
                             <button class="btn-create" type="submit">+ Add</button>
                         </form>
-
-
                     </div>
-
-
                 </div>
-
             </div>
             {% endfor %}
-
         </div>
-
     </div>
-
 </main>
 
 {% endblock%}

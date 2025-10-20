@@ -179,6 +179,14 @@ def trip_schedule(trip_id):
     flash("The trip does not exist.", "error")
     return redirect(url_for('index'))
 
+@app.route("/trips/<int:trip_id>/<day>/delete", methods=["POST"])
+@require_logged_in_user
+def delete_trip_day(trip_id, day):
+    day = None if day == 'no_date' else day
+    g.storage.delete_day_for_trip(trip_id, day)
+    flash("The day has been successfully deleted", "success")
+    return redirect(url_for('trip_schedule', trip_id=trip_id))
+    
 @app.route("/trips/<int:trip_id>", methods=['POST'])
 @require_logged_in_user
 def delete_trip(trip_id):

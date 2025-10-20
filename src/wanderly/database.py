@@ -71,6 +71,18 @@ class Database:
             with conn.cursor() as cursor:
                 cursor.execute(query, (destination, start_date, end_date, user_id,))
     
+    def delete_day_for_trip(self, trip_id, day):
+        if not day:
+            query = 'DELETE FROM plans WHERE trip_id = %s and activity_date IS NULL'
+            params = (trip_id,)
+        else: 
+            query = 'DELETE FROM plans WHERE trip_id = %s and activity_date = %s'
+            params = (trip_id, day,)
+
+        with self._database_connect() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, params)    
+
     def delete_trip_by_id(self, trip_id):
         query = 'DELETE FROM trips WHERE id = %s'
         with self._database_connect() as conn:
