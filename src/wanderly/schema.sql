@@ -8,6 +8,10 @@ CREATE TABLE users(
 );
 
 -- ADD A DATES TABLE? 
+CREATE TABLE dates(
+    id SERIAL PRIMARY KEY,
+    title text
+)
 
 CREATE TABLE trips(
     id serial PRIMARY KEY,
@@ -20,9 +24,11 @@ CREATE TABLE trips(
 CREATE TABLE plans(
     id serial PRIMARY KEY,
     at_date date,
+    at_time time,
     activity text NOT NULL,
     cost numeric CHECK (cost > 0),
     note text,
-    vacation_id integer NOT NULL REFERENCES vacations(id) ON DELETE CASCADE
+    vacation_id integer NOT NULL,
+    FOREIGN KEY (vacation_id) REFERENCES vacations(id) ON DELETE CASCADE,
 );
 

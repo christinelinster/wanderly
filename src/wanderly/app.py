@@ -160,6 +160,12 @@ def create_trip():
     flash('Your new adventure has been created', "success")
     return redirect(url_for('index'))
 
+@app.route("/trips/<int:trip_id>/day/add")
+@require_logged_in_user
+def add_new_day():
+    pass
+
+
 @app.route("/trips/<int:trip_id>")
 @require_logged_in_user
 def trip_schedule(trip_id):
@@ -169,7 +175,7 @@ def trip_schedule(trip_id):
         plans_by_date = {}
 
         for activity in schedule: 
-            date = activity['activity_date'] or 'No Dates'
+            date = activity['at_date'] or 'No Dates'
             if date not in plans_by_date:
                 plans_by_date[date] = []
 

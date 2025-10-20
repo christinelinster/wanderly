@@ -24,7 +24,7 @@ class Database:
         return trips
     
     def get_itinerary(self, trip_id):
-        query = 'SELECT * FROM plans WHERE trip_id = %s ORDER BY activity_date, activity_time'
+        query = 'SELECT * FROM plans WHERE trip_id = %s ORDER BY at_date, at_time'
         with self._database_connect() as conn:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (trip_id,))
@@ -73,10 +73,10 @@ class Database:
     
     def delete_day_for_trip(self, trip_id, day):
         if not day:
-            query = 'DELETE FROM plans WHERE trip_id = %s and activity_date IS NULL'
+            query = 'DELETE FROM plans WHERE trip_id = %s and at_date IS NULL'
             params = (trip_id,)
         else: 
-            query = 'DELETE FROM plans WHERE trip_id = %s and activity_date = %s'
+            query = 'DELETE FROM plans WHERE trip_id = %s and at_date = %s'
             params = (trip_id, day,)
 
         with self._database_connect() as conn:

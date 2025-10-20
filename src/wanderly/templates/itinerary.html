@@ -18,17 +18,6 @@
                         formatted_title_date}}</span>
                 </div>
             </div>
-
-            <div class="trip-actions">
-                <form action="">
-                    <button class="btn-edit" type="submit"><i class="icon fa-solid fa-pen"></i></button>
-                </form>
-                <form class="delete" action="{{ url_for('delete_trip', trip_id=trip.id) }}" method="post">
-                    <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
-                </form>
-
-            </div>
-
         </div>
 
         <div class="trip-add-day">
@@ -40,61 +29,65 @@
 
         <div class="itinerary">
             {% if not plans_by_date.items() %}
-                <p>You don't have any plans yet!</p>
+            <p>You don't have any plans yet!</p>
             {% endif %}
 
             {% for date, activities in plans_by_date.items() %}
-            <div class="itinerary-day">
-                <div class="itinerary-card">
-                    <div class="day-header">
-                        <div class="day-info">
-                            <h3 class="day-title">{{ date | formatted_date }}</h3>
-                        </div>
-                        <div class="trip-actions">
-                            <form action="{{ url_for('delete_trip_day', trip_id=trip.id, day='no_date' if date=='No Dates' else date) }}" method="post">
-                                <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
-                            </form>
-                        </div>
+            <div class="itinerary-card">
+                <div class="day-header">
+                    <div class="day-info">
+                        <h3 class="day-title">{{ date | formatted_date }}</h3>
                     </div>
-
-                    <div class="day-activities">
-                        <div class="activity-label">
-                            <p>Time</p>
-                            <p>Activity</p>
-                            <p>Description</p>
-                            <p>Cost</p>
-                            <p>Actions</p>
-                        </div>
-                        {% for act in activities %}
-                        <div class="activity">
-
-                            <p class="activity-time">{{ act.activity_time | formatted_time}}</p>
-                            <p class="activity-title"> {{ act.activity }}</p>
-
-                            <p class="activity-note">{{ act.note }}</p>
-                            <p class="activity-cost">{{ act.cost }}</p>
-
-                            <div class="trip-actions">
-                                <form action="" method="post">
-                                    <button class="btn-edit" type="submit"><i class="icon fa-solid fa-pen"></i></button>
-                                </form>
-                                <form action="" method="post">
-                                    <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
-                                </form>
-
-                            </div>
-                        </div>
-                        {% endfor %}
-
-                        <form class="day-actions" action="" method="post">
-                            <input type="text" name="time" placeholder="HH:MM" pattern='[0-9]{4}-[0-1][0-9]-[0-3][0-9] (1[012]|0?[1-9]):[0-5][0-9] (am|pm|AM|PM)'>
-                            <input type="text" name="activity" placeholder="Add Activity">
-                            <input type="text" name="note" placeholder="Description">
-                            <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" name="cost"
-                                placeholder="$">
-                            <button class="btn-create" type="submit">+ Add</button>
+                    <div class="trip-actions">
+                        <form
+                            action="{{ url_for('delete_trip_day', trip_id=trip.id, day='no_date' if date=='No Dates' else date) }}"
+                            method="post">
+                            <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
                         </form>
                     </div>
+                </div>
+
+                <div class="day-activities">
+                    <div class="activity-label">
+                        <p>Time</p>
+                        <p>Activity</p>
+                        <p class="note">Description</p>
+                        <p>Cost</p>
+                        <p>Actions</p>
+
+                    </div>
+                    {% for act in activities %}
+                    <div class="activity">
+                        <p class="activity-time">{{ act.at_time | formatted_time}}</p>
+                        <p class="activity-title"> {{ act.activity }}</p>
+
+                        <p class="activity-note">{{ act.note }}</p>
+                        <p class="activity-cost">{{ act.cost }}</p>
+
+                        <div class="trip-actions">
+                            <form action="" method="post">
+                                <button class="btn-edit" type="submit"><i class="icon fa-solid fa-pen"></i></button>
+                            </form>
+                            <form action="" method="post">
+                                <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
+                            </form>
+
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <form class="day-actions" action="" method="post">
+                        <input type="text" name="time" placeholder="HH:MM"
+                            pattern='[0-9]{4}-[0-1][0-9]-[0-3][0-9] (1[012]|0?[1-9]):[0-5][0-9] (am|pm|AM|PM)'>
+                        <input type="text" name="activity" placeholder="Add Activity">
+                        <input type="text" name="note" placeholder="Description">
+                        <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" name="cost" placeholder="$">
+
+                        <div>
+                            <button class="btn-create" type="submit"><i class="icon fa-solid fa-plus"></i></button>
+                        </div>
+
+                    </form>
                 </div>
             </div>
             {% endfor %}
