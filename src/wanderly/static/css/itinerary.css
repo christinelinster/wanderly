@@ -28,10 +28,10 @@
   margin: 0 0 3rem 0;
   display: flex;
   width: 100%;
-    min-width: 200px;
+  min-width: 200px;
 }
 
-.new-day-info{
+.new-day-info {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
@@ -42,29 +42,33 @@
 
 
 .new-day-info input {
-    padding: 0.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-    font-family: var(--font-body);
-    width: 7rem;
+  padding: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  width: 7rem;
 }
 
-.new-day-info .activity-cost, .new-day-info .activity-time{
+.new-day-info .activity-cost,
+.new-day-info .activity-time {
   width: 4rem;
 }
 
 .new-day-info input:focus {
-    outline: 1px solid rgba(0, 0, 0, 0.1);
+  outline: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 864px) {
-  .new-day-info input, .new-day-info .activity-cost, .new-day-info .activity-time{
+
+  .new-day-info input,
+  .new-day-info .activity-cost,
+  .new-day-info .activity-time {
     width: auto;
-  }  
+  }
 
   .new-day-info {
-        flex-direction: column;
-    }
+    flex-direction: column;
+  }
 
 }
 
@@ -102,17 +106,28 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   backdrop-filter: blur(10px);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
+}
+
+.day-activities:hover {
+    transform: translate(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
 
 .day-actions,
 .activity,
 .activity-label {
-display: contents;
+  display: contents;
 }
 
 
@@ -131,39 +146,49 @@ display: contents;
   align-items: start;
 }
 
-.day-actions input{
+.day-actions input {
   width: 100%;
   box-sizing: border-box;
   font-family: var(--font-body);
-  padding: 0.5rem;
-  border:1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
+  padding: 0.5rem 0;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   align-self: center;
+  background: none;
 }
 
-.day-actions input:focus{
-      outline: 1px solid rgba(0, 0, 0, 0.1);
+.day-actions input:active,
+.day-actions input:focus {
+  border-bottom: 2px solid var(--primary-orange);
+  outline: none;
+}
+
+.day-actions input:active::placeholder,
+.day-actions input:focus::placeholder {
+  color: var(--primary-orange);
 }
 
 
-.activity > .activity-title{
+.activity>.activity-title {
   font-weight: 300;
 }
 
 @media (max-width: 640px) {
 
-  .itinerary{
-      grid-template-columns: 1fr
+  .itinerary {
+    grid-template-columns: 1fr
   }
-  .itinerary-day{
+
+  .itinerary-day {
     min-width: 250px;
   }
 
-  .day-activities{
-      grid-template-columns: 2fr 3fr 2fr 1fr;
+  .day-activities {
+    grid-template-columns: 2fr 3fr 2fr 1fr;
   }
 
-  .activity-label > .note, .activity > .activity-note,
+  .activity-label>.note,
+  .activity>.activity-note,
   .day-actions {
     display: none;
   }

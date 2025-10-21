@@ -11,6 +11,7 @@ from flask import (
 
 from filters import (
     safe_default, 
+    safe_default_money,
     formatted_date,
     formatted_title_date,
     formatted_time
@@ -29,6 +30,7 @@ app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
 
 app.jinja_env.filters['safe_default'] = safe_default
+app.jinja_env.filters['safe_default_money'] = safe_default_money
 app.jinja_env.filters['formatted_date'] = formatted_date
 app.jinja_env.filters['formatted_title_date'] = formatted_title_date
 app.jinja_env.filters['formatted_time'] = formatted_time

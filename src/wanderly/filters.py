@@ -1,6 +1,10 @@
 def safe_default(value):
     return value if value else ''
 
+def safe_default_money(value):
+    return f'$ {value}' if value else '$ 0.00'
+
+
 def formatted_date(date):
     return date if isinstance(date, str) else date.strftime("%b %d")
 

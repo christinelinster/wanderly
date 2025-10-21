@@ -69,7 +69,7 @@
                         <p class="activity-title"> {{ act.activity }}</p>
 
                         <p class="activity-note">{{ act.note | safe_default }}</p>
-                        <p class="activity-cost">{{ act.cost |safe_default }}</p>
+                        <p class="activity-cost">{{ act.cost |safe_default_money }}</p>
 
                         <div class="trip-actions">
                             <form action="" method="post">
@@ -91,7 +91,7 @@
                         <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" name="cost" placeholder="$">
 
                         <div>
-                            <button class="btn-create" type="submit"><i class="icon fa-solid fa-plus"></i></button>
+                            <button class="btn-add" type="submit"><i class="icon fa-solid fa-plus"></i></button>
                         </div>
 
                     </form>
