@@ -20,9 +20,16 @@
             </div>
         </div>
 
-        <div class="trip-add-day">
-            <form action="">
-                <button class="btn-create">+ Add Plan</button>
+        <div class="new-day-container">
+            <form class="new-day-info" action="">
+                <input type="date">
+                <input class="activity-time" type="text" name="time" placeholder="HH:MM"
+                            pattern='[0-9]{4}-[0-1][0-9]-[0-3][0-9] (1[012]|0?[1-9]):[0-5][0-9] (am|pm|AM|PM)'>
+                <input class="activity-title" type="text" placeholder="Activity">
+                <input class="activity-note" type="text" name="note" placeholder="Notes">
+                <input class="activity-cost" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" name="cost" placeholder="$">
+                <button class="btn-create"><i class="icon fa-solid fa-plus"></i> New
+                </button>
             </form>
         </div>
 
@@ -51,7 +58,7 @@
                     <div class="activity-label">
                         <p>Time</p>
                         <p>Activity</p>
-                        <p class="note">Description</p>
+                        <p class="note">Notes</p>
                         <p>Cost</p>
                         <p>Actions</p>
 
@@ -61,8 +68,8 @@
                         <p class="activity-time">{{ act.at_time | formatted_time}}</p>
                         <p class="activity-title"> {{ act.activity }}</p>
 
-                        <p class="activity-note">{{ act.note }}</p>
-                        <p class="activity-cost">{{ act.cost }}</p>
+                        <p class="activity-note">{{ act.note | safe_default }}</p>
+                        <p class="activity-cost">{{ act.cost |safe_default }}</p>
 
                         <div class="trip-actions">
                             <form action="" method="post">
@@ -80,7 +87,7 @@
                         <input type="text" name="time" placeholder="HH:MM"
                             pattern='[0-9]{4}-[0-1][0-9]-[0-3][0-9] (1[012]|0?[1-9]):[0-5][0-9] (am|pm|AM|PM)'>
                         <input type="text" name="activity" placeholder="Add Activity">
-                        <input type="text" name="note" placeholder="Description">
+                        <input type="text" name="note" placeholder="Notes">
                         <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" name="cost" placeholder="$">
 
                         <div>

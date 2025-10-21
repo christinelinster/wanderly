@@ -38,17 +38,24 @@ body {
   box-sizing: border-box;
   padding: 3rem 5rem;
 }
+@media (max-width: 864px) {
+  body{
+    padding: 2rem;
+    font-size: 0.9rem;
+  }
+}
 
 
 @media (max-width: 768px) {
   body {
     padding: 1rem;
+    font-size: 0.8rem;
   }
 }
 
 @media(max-width: 480px) {
   body {
-    padding: 0.2rem;
+    padding: 0.5rem;
   }
 }
 

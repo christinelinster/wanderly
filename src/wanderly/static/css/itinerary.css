@@ -24,9 +24,50 @@
   color: var(--text-gray);
 }
 
-.trip-add-day {
+.new-day-container {
   margin: 0 0 3rem 0;
+  display: flex;
+  width: 100%;
+    min-width: 200px;
 }
+
+.new-day-info{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: start;
+}
+
+
+
+.new-day-info input {
+    padding: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    font-family: var(--font-body);
+    width: 7rem;
+}
+
+.new-day-info .activity-cost, .new-day-info .activity-time{
+  width: 4rem;
+}
+
+.new-day-info input:focus {
+    outline: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 864px) {
+  .new-day-info input, .new-day-info .activity-cost, .new-day-info .activity-time{
+    width: auto;
+  }  
+
+  .new-day-info {
+        flex-direction: column;
+    }
+
+}
+
 
 /* Fix this later */
 .itinerary {
@@ -54,7 +95,7 @@
 
 .day-activities {
   display: grid;
-  grid-template-columns: 2fr 3fr 4fr 2fr 1fr;
+  grid-template-columns: 2fr 3fr 3fr 1fr auto;
   grid-auto-rows: auto;
   gap: 0.5rem 1rem;
   padding: 1.5rem 1rem;
@@ -73,7 +114,6 @@
 .activity-label {
 display: contents;
 }
-
 
 
 .activity-label>p {
@@ -95,12 +135,14 @@ display: contents;
   width: 100%;
   box-sizing: border-box;
   font-family: var(--font-body);
-  font-size: 1rem;
   padding: 0.5rem;
-  border: none;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border:1px solid rgba(0, 0, 0, 0.1);
   border-radius: 6px;
   align-self: center;
+}
+
+.day-actions input:focus{
+      outline: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 
