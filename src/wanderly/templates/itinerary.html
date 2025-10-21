@@ -21,13 +21,13 @@
         </div>
 
         <div class="new-day-container">
-            <form class="new-day-info" action="">
-                <input type="date">
-                <input class="activity-time" type="text" name="time" placeholder="HH:MM"
-                            pattern='[0-9]{4}-[0-1][0-9]-[0-3][0-9] (1[012]|0?[1-9]):[0-5][0-9] (am|pm|AM|PM)'>
-                <input class="activity-title" type="text" placeholder="Activity">
+            <form class="new-day-info" action="{{ url_for('add_new_plan', trip_id = trip.id) }}" method="post">
+                <input type="date" name="date">
+                <input class="activity-time" type="text" name="time" placeholder="HH:MM (AM/PM)"
+                            pattern='(1[0-2]|0?[1-9]):[0-5][0-9]\s?(am|pm|AM|PM)'>
+                <input class="activity-title" type="text" name="activity" placeholder="Activity" required>
                 <input class="activity-note" type="text" name="note" placeholder="Notes">
-                <input class="activity-cost" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" name="cost" placeholder="$">
+                <input class="activity-cost" type="text" name="cost"  inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" placeholder="$">
                 <button class="btn-create"><i class="icon fa-solid fa-plus"></i> New
                 </button>
             </form>
@@ -75,7 +75,7 @@
                             <form action="" method="post">
                                 <button class="btn-edit" type="submit"><i class="icon fa-solid fa-pen"></i></button>
                             </form>
-                            <form action="" method="post">
+                            <form action="{{ url_for('delete_activity', trip_id=trip.id, activity_id=act.id) }}" method="post">
                                 <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
                             </form>
 
@@ -83,9 +83,10 @@
                     </div>
                     {% endfor %}
 
-                    <form class="day-actions" action="" method="post">
+                    <form class="day-actions" action="{{ url_for('add_new_plan', trip_id = trip.id)}}" method="post">
+                        <input type="date" name="date" value="{{ date }}" hidden>
                         <input type="text" name="time" placeholder="HH:MM"
-                            pattern='[0-9]{4}-[0-1][0-9]-[0-3][0-9] (1[012]|0?[1-9]):[0-5][0-9] (am|pm|AM|PM)'>
+                            pattern='(1[0-2]|0?[1-9]):[0-5][0-9]\s?(am|pm|AM|PM)'>
                         <input type="text" name="activity" placeholder="Add Activity">
                         <input type="text" name="note" placeholder="Notes">
                         <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" name="cost" placeholder="$">

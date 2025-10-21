@@ -99,8 +99,8 @@
 
 .day-activities {
   display: grid;
-  grid-template-columns: 2fr 3fr 3fr 1fr auto;
-  grid-auto-rows: auto;
+  grid-template-columns: 80px 3fr 3fr 1fr auto;
+  grid-auto-rows:auto;
   gap: 0.5rem 1rem;
   padding: 1.5rem 1rem;
   border: 1px solid rgba(0, 0, 0, 0.1);

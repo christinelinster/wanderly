@@ -134,8 +134,8 @@ def show_trip_to_edit(trip_id):
 @require_logged_in_user
 def edit_trip(trip_id):
     destination = request.form['destination'].strip()
-    start_date = request.form['start_date']
-    end_date = request.form['end_date']
+    start_date = request.form['start_date'] or None
+    end_date = request.form['end_date'] or None
 
     error = error_for_trips(destination, start_date, end_date)
     if error:
@@ -150,8 +150,8 @@ def edit_trip(trip_id):
 @require_logged_in_user
 def create_trip():
     destination = request.form['destination'].strip()
-    start_date = request.form['start-date']
-    end_date = request.form['end-date']
+    start_date = request.form['start-date'] or None
+    end_date = request.form['end-date'] or None
 
     error = error_for_trips(destination, start_date, end_date)
     if error:
@@ -162,11 +162,19 @@ def create_trip():
     flash('Your new adventure has been created', "success")
     return redirect(url_for('index'))
 
-@app.route("/trips/<int:trip_id>/day/add")
+# Sanitize and validate inputs, such as cost
+@app.route("/trips/<int:trip_id>/day/add", methods = ["POST"])
 @require_logged_in_user
-def add_new_day():
-    pass
+def add_new_plan(trip_id):
+    date = request.form['date'] or None
+    time = request.form['time'] or None
+    title = request.form['activity']
+    note = request.form['note'] or None
+    cost = request.form['cost'] or None
 
+    g.storage.add_new_activity(date, time, title, note, cost, trip_id)
+    flash("Activity added.", "success")
+    return redirect(url_for('trip_schedule', trip_id = trip_id))
 
 @app.route("/trips/<int:trip_id>")
 @require_logged_in_user
@@ -187,14 +195,22 @@ def trip_schedule(trip_id):
     flash("The trip does not exist.", "error")
     return redirect(url_for('index'))
 
-@app.route("/trips/<int:trip_id>/<day>/delete", methods=["POST"])
+@app.route("/trips/<int:trip_id>/days/<day>/delete", methods=["POST"])
 @require_logged_in_user
 def delete_trip_day(trip_id, day):
     day = None if day == 'no_date' else day
     g.storage.delete_day_for_trip(trip_id, day)
     flash("The day has been successfully deleted", "success")
     return redirect(url_for('trip_schedule', trip_id=trip_id))
-    
+
+@app.route("/trips/<int:trip_id>/activiites/<int:activity_id>/delete", methods=["POST"])
+@require_logged_in_user
+def delete_activity(trip_id, activity_id):
+    g.storage.delete_activity_by_id(trip_id, activity_id)
+    flash("Plan successfully deleted", "success")
+    return redirect(url_for('trip_schedule', trip_id = trip_id))
+
+
 @app.route("/trips/<int:trip_id>", methods=['POST'])
 @require_logged_in_user
 def delete_trip(trip_id):

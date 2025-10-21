@@ -67,21 +67,31 @@ class Database:
 
     def create_new_trip(self, destination, start_date, end_date, user_id ):
         query = 'INSERT INTO trips (destination, depart_date, return_date, user_id) VALUES(%s, %s, %s, %s)'
+        values = (destination, start_date, end_date, user_id,)
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
-                cursor.execute(query, (destination, start_date, end_date, user_id,))
+                cursor.execute(query, values)
     
+    #  Need to sanitize and validate inputs
+    def add_new_activity(self, date, time, title, note, cost, trip_id):
+        query = 'INSERT INTO plans(at_date, at_time, activity, note, cost, trip_id) VALUES(%s, %s, %s, %s, %s, %s)'
+        values = (date, time, title, note, cost, trip_id,)
+        with self._database_connect() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, values)
+
+
     def delete_day_for_trip(self, trip_id, day):
         if not day:
             query = 'DELETE FROM plans WHERE trip_id = %s and at_date IS NULL'
-            params = (trip_id,)
+            values = (trip_id,)
         else: 
             query = 'DELETE FROM plans WHERE trip_id = %s and at_date = %s'
-            params = (trip_id, day,)
+            values = (trip_id, day,)
 
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
-                cursor.execute(query, params)    
+                cursor.execute(query, values)    
 
     def delete_trip_by_id(self, trip_id):
         query = 'DELETE FROM trips WHERE id = %s'
@@ -89,8 +99,15 @@ class Database:
             with conn.cursor() as cursor:
                 cursor.execute(query, (trip_id, ))
 
-    def edit_trip_heading(self, destination, start_date, end_date, trip_id):
-        query = 'UPDATE trips SET destination = %s, depart_date = %s, return_date = %s WHERE id = %s'
+    def delete_activity_by_id(self, trip_id, activity_id):
+        query = 'DELETE FROM plans WHERE trip_id = %s AND id = %s'
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
-                cursor.execute(query, (destination, start_date, end_date, trip_id))
+                cursor.execute(query, (trip_id, activity_id,))
+
+    def edit_trip_heading(self, destination, start_date, end_date, trip_id):
+        query = 'UPDATE trips SET destination = %s, depart_date = %s, return_date = %s WHERE id = %s'
+        values = (destination, start_date, end_date, trip_id,)
+        with self._database_connect() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, values)

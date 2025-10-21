@@ -44,25 +44,32 @@ body {
     padding: 2rem;
     font-size: 0.9rem;
   }
+
+  .btn-add, .btn-edit, .btn-delete, .btn-create{
+    font-size: 0.9rem;
+  }
 }
 
 
 @media (max-width: 768px) {
   body {
-    padding: 1rem;
+    padding: 2rem 1rem;
+    font-size: 0.8rem;
+  }
+
+    .btn-add, .btn-edit, .btn-delete, .btn-create{
     font-size: 0.8rem;
   }
 }
 
 @media(max-width: 480px) {
   body {
-    padding: 0.5rem;
+    padding: 1.5rem 1rem
   }
 }
 
 .btn-edit,
 .btn-delete {
-  padding: 0.5rem 0.2rem;
   border: none;
   border-radius: 6px;
   cursor: pointer;

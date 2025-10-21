@@ -159,7 +159,7 @@
 
 .trip-actions {
     display: flex;
-    gap: 5px;
+    gap: 2px;
     flex-shrink: 0;
 }
 
