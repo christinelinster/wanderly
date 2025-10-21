@@ -17,6 +17,7 @@ from filters import (
     formatted_time
     )
 from utils import (
+    clean_cost_input,
     error_for_trips,
     error_for_create_user
 )
@@ -170,7 +171,7 @@ def add_new_plan(trip_id):
     time = request.form['time'] or None
     title = request.form['activity']
     note = request.form['note'] or None
-    cost = request.form['cost'] or None
+    cost = clean_cost_input(request.form['cost']) or None
 
     g.storage.add_new_activity(date, time, title, note, cost, trip_id)
     flash("Activity added.", "success")

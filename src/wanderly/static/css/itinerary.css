@@ -39,14 +39,12 @@
   justify-content: start;
 }
 
-
-
 .new-day-info input {
   padding: 0.5rem;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 6px;
   font-family: var(--font-body);
-  width: 7rem;
+  width: 8rem;
 }
 
 .new-day-info .activity-cost,
@@ -76,8 +74,14 @@
 /* Fix this later */
 .itinerary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(580px,0.3fr));
+  justify-content: center;
   gap: 1.5rem;
+}
+
+.itinerary .no-activity{
+  display: flex;
+  justify-content: center;
 }
 
 .itinerary-card {
@@ -99,8 +103,8 @@
 
 .day-activities {
   display: grid;
-  grid-template-columns: 80px 3fr 3fr 1fr auto;
-  grid-auto-rows:auto;
+  grid-template-columns: 80px 3fr 4fr 1fr auto;
+  grid-auto-rows: auto;
   gap: 0.5rem 1rem;
   padding: 1.5rem 1rem;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -118,9 +122,9 @@
 }
 
 .day-activities:hover {
-    transform: translate(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    background-color: rgba(255, 255, 255, 0.7);
+  transform: translate(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.7);
 }
 
 

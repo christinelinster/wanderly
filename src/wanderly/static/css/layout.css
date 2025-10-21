@@ -56,11 +56,12 @@
 
 
 .flash {
-    padding: 0.5rem;
-    width: 50%;
-    margin: 1rem auto;
+    align-self: center;
     border-radius: 8px;
     text-align: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 1rem auto;
 }
 
 .flash.success {
@@ -83,6 +84,7 @@
 
 .flash p {
     margin: 0;
+    padding: 0.5rem 0;
     font-family: var(--font-body);
 }
 

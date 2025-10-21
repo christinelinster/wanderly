@@ -72,14 +72,12 @@ class Database:
             with conn.cursor() as cursor:
                 cursor.execute(query, values)
     
-    #  Need to sanitize and validate inputs
     def add_new_activity(self, date, time, title, note, cost, trip_id):
         query = 'INSERT INTO plans(at_date, at_time, activity, note, cost, trip_id) VALUES(%s, %s, %s, %s, %s, %s)'
         values = (date, time, title, note, cost, trip_id,)
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(query, values)
-
 
     def delete_day_for_trip(self, trip_id, day):
         if not day:

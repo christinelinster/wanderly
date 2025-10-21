@@ -13,3 +13,6 @@ def error_for_create_user(name, email, password):
     if any(not t for t in [name, email, password]):
         return "The fields are required."
     return None
+
+def clean_cost_input(cost):
+    return cost.replace(',', '')
