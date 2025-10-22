@@ -18,6 +18,7 @@ from filters import (
     )
 from utils import (
     clean_cost_input,
+    error_for_activity_title,
     error_for_trips,
     error_for_create_user
 )
@@ -71,6 +72,8 @@ def index():
 def show_login_form():
     return render_template("login.html")
 
+
+# Need to make sure fields aren't empty
 @app.route("/login", methods=["POST"])
 def login():
     email = request.form['email']
@@ -87,10 +90,13 @@ def login():
     flash("Invalid credentials", "error")
     return render_template("login.html"), 401
 
+
 @app.route("/signup")
 def show_signup_form():
     return render_template("signup.html")
 
+
+# Need to make sure fields aren't empty
 @app.route("/signup", methods=["POST"])
 def create_user():
     name = request.form['name']
@@ -163,17 +169,28 @@ def create_trip():
     flash('Your new adventure has been created', "success")
     return redirect(url_for('index'))
 
-# Sanitize and validate inputs, such as cost
+# Sanitize and validate inputs, such as cost and activity title
 @app.route("/trips/<int:trip_id>/activity/add", methods = ["POST"])
 @require_logged_in_user
 def add_new_plan(trip_id):
     date = request.form['date'] or None
     time = request.form['time'] or None
-    title = request.form['activity']
-    note = request.form['note'] or None
+    activity = request.form['activity'].strip()
+    note = request.form['note'].strip() or None
     cost = clean_cost_input(request.form['cost']) or None
 
-    g.storage.add_new_activity(date, time, title, note, cost, trip_id)
+    error = error_for_activity_title(activity)
+    if error:
+        flash(error, "error")
+        return redirect(url_for('trip_schedule', 
+                                trip_id=trip_id, 
+                                time=time, 
+                                activity=activity, 
+                                note=note, 
+                                cost=cost)
+                                )
+
+    g.storage.add_new_activity(date, time, activity, note, cost, trip_id)
     flash("Activity added.", "success")
     return redirect(url_for('trip_schedule', trip_id = trip_id))
 
@@ -200,10 +217,16 @@ def show_activity_to_edit(trip_id, activity_id):
 @app.route("/trips/<int:trip_id>/activities/<int:activity_id>/edit", methods=["POST"])
 def edit_activity(trip_id, activity_id):
     time = request.form['time'] or None
-    title = request.form['activity']
-    note = request.form['note'] or None
+    activity = request.form['activity'].strip()
+    note = request.form['note'].strip() or None
     cost = clean_cost_input(request.form['cost']) or None
-    g.storage.edit_activity_info(time, title, note, cost, trip_id, activity_id)
+
+    error = error_for_activity_title(activity)
+    if error:
+        flash(error, "error")
+        return redirect(url_for('edit_activity', trip_id = trip_id, activity_id=activity_id))
+
+    g.storage.edit_activity_info(time, activity, note, cost, trip_id, activity_id)
     flash("Itinerary successfull updated!", "success")
     return redirect(url_for('trip_schedule', trip_id=trip_id))
 
@@ -214,7 +237,7 @@ def trip_schedule(trip_id):
 
     if not trip: 
         flash("Trip not found.", "error")
-        return redirect(url_for(index));
+        return redirect(url_for(index))
 
     schedule = g.storage.get_itinerary(trip_id)
     plans_by_date = {}
@@ -226,7 +249,19 @@ def trip_schedule(trip_id):
 
         plans_by_date[date].append(activity)
 
-    return render_template("itinerary.html", plans_by_date=plans_by_date, trip=trip)
+    time = request.args.get("time", "")
+    activity = request.args.get("activity", "")
+    note = request.args.get("note", "")
+    cost = request.args.get("cost", "")
+
+    return render_template("itinerary.html", 
+                           plans_by_date=plans_by_date, 
+                           trip=trip,
+                           time=time,
+                           activity=activity,
+                           note=note,
+                           cost=cost,
+                           )
 
 @app.route("/trips/<int:trip_id>/days/<day>/delete", methods=["POST"])
 @require_logged_in_user

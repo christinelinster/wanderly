@@ -14,5 +14,11 @@ def error_for_create_user(name, email, password):
         return "The fields are required."
     return None
 
+def error_for_activity_title(text):
+    if not text:
+        return "You must provide an activity."
+    return None
+
+
 def clean_cost_input(cost):
     return cost.replace(',', '')
