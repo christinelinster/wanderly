@@ -6,6 +6,8 @@ def safe_default_money(value):
 
 
 def formatted_date(date):
+    if not date:
+        return 'No Dates'
     return date if isinstance(date, str) else date.strftime("%b %d")
 
 def formatted_title_date(date):

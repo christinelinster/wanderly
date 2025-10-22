@@ -1,42 +1,48 @@
+import bcrypt
+from database import Database
+from filters import (
+    formatted_date,
+    formatted_time,
+    formatted_title_date,
+    safe_default, 
+    safe_default_money,
+    )
+
 from flask import (
     Flask,
     flash,
     g,
-    render_template,
     redirect,
+    render_template,
     request,
     session,
     url_for
 )
 
-from filters import (
-    safe_default, 
-    safe_default_money,
-    formatted_date,
-    formatted_title_date,
-    formatted_time
-    )
-from utils import (
-    clean_cost_input,
-    error_for_activity_title,
-    error_for_trips,
-    error_for_create_user
-)
-import re
 from functools import wraps
-import bcrypt
+from utils import (
+    error_for_activity_input,
+    error_for_create_user,
+    error_for_login,
+    error_for_trips,
+    get_first_name,
+    get_trip_heading,
+    remove_punc_for_cost,
+)
+
 import secrets
-from database import Database
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
 
+# ---- JINJA FILTERS ----
+app.jinja_env.filters['formatted_date'] = formatted_date
+app.jinja_env.filters['formatted_time'] = formatted_time
+app.jinja_env.filters['formatted_title_date'] = formatted_title_date
 app.jinja_env.filters['safe_default'] = safe_default
 app.jinja_env.filters['safe_default_money'] = safe_default_money
-app.jinja_env.filters['formatted_date'] = formatted_date
-app.jinja_env.filters['formatted_title_date'] = formatted_title_date
-app.jinja_env.filters['formatted_time'] = formatted_time
 
+# ---- AUTH HELPER FUNCTIONS ----
 def valid_credentials(email, password):
     user = g.storage.get_user_credentials(email)
     if user:
@@ -46,8 +52,10 @@ def valid_credentials(email, password):
             return user
     return None
 
+
 def user_logged_in():
     return 'user_id' in session
+
 
 def require_logged_in_user(f):
     @wraps(f)
@@ -59,49 +67,24 @@ def require_logged_in_user(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+# ---- BEFORE REQUEST -----
 @app.before_request
 def load_db():
     g.storage = Database()
 
-@app.route("/")
-@require_logged_in_user
-def index():
-    return redirect(url_for('show_trips'))
 
-@app.route("/login")
-def show_login_form():
-    return render_template("login.html")
-
-
-# Need to make sure fields aren't empty
-@app.route("/login", methods=["POST"])
-def login():
-    email = request.form['email']
-    password = request.form['password']
-
-    user = valid_credentials(email, password)
-    
-    if user:
-        session['user_id'] = user['id']
-        next_page = session.pop('next', None)
-        if not next_page:
-            next_page = url_for('index')
-        return redirect(next_page)
-    flash("Invalid credentials", "error")
-    return render_template("login.html"), 401
-
-
+# ---- AUTH ----
 @app.route("/signup")
 def show_signup_form():
     return render_template("signup.html")
 
 
-# Need to make sure fields aren't empty
 @app.route("/signup", methods=["POST"])
 def create_user():
-    name = request.form['name']
-    email = request.form['email']
-    password = request.form['password']
+    name = request.form['name'].strip()
+    email = request.form['email'].strip()
+    password = request.form['password'].strip()
 
     error = error_for_create_user(name, email, password)
     if error:
@@ -118,25 +101,66 @@ def create_user():
     flash("User has been created", "success")
     return redirect(url_for('login'))
 
+
+@app.route("/login")
+def show_login_form():
+    return render_template("login.html")
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    email = request.form['email'].strip()
+    password = request.form['password'].strip()
+
+    error = error_for_login(email, password)
+    if error:
+        flash(error, "error")
+        return render_template('login.html')
+    
+    user = valid_credentials(email, password)
+
+    if user:
+        session['user_id'] = user['id']
+        next_page = session.pop('next', None)
+        if not next_page:
+            next_page = url_for('index')
+        return redirect(next_page)
+
+    flash("Invalid credentials", "error")
+    return render_template("login.html"), 401
+
+@app.route("/signout", methods=["POST"])
+@require_logged_in_user
+def signout():
+    session.clear()
+    flash("You have been signed out", "success")
+    return redirect(url_for('show_login_form'))
+
+
+# ---- HOME ----
+@app.route("/")
+@require_logged_in_user
+def index():
+    return redirect(url_for('show_trips'))
+
+
 @app.route("/trips")
 @require_logged_in_user
 def show_trips():
-    trips = g.storage.get_trips_by_user(session['user_id'])
-    name = g.storage.get_name_by_id(session['user_id'])['full_name']
-    if name:
-        first_name = name.split()[0]
+    trips = g.storage.get_trips_by_user_id(session['user_id'])
+    first_name = get_first_name(trips, session['user_id'], g.storage)
+
     return render_template("trips.html", trips=trips, first_name=first_name)
+
 
 @app.route("/trips/<int:trip_id>/edit", methods=["GET"])
 @require_logged_in_user
 def show_trip_to_edit(trip_id):
-    trips = g.storage.get_trips_by_user(session['user_id'])
-    name = g.storage.get_name_by_id(session['user_id'])['full_name']
-    if name:
-        first_name = name.split()[0]
+    trips = g.storage.get_trips_by_user_id(session['user_id'])
+    first_name = get_first_name(trips, session['user_id'], g.storage)
     return render_template("trips.html", trips=trips, first_name=first_name, edit_trip_id=trip_id)
 
-# Need to validate and sanitize input 
+
 @app.route("/trips/<int:trip_id>/edit", methods=["POST"])
 @require_logged_in_user
 def edit_trip(trip_id):
@@ -150,10 +174,25 @@ def edit_trip(trip_id):
         return redirect(url_for('show_trip_to_edit', trip_id=trip_id))
 
     g.storage.edit_trip_heading(destination, start_date, end_date, trip_id)
-    flash("Trip successfully edited.", "success")
+    flash("Trip saved.", "success")
     return redirect(url_for('index'))
 
-@app.route("/trips", methods=["POST"])
+
+@app.route("/trips/<int:trip_id>", methods=['POST'])
+@require_logged_in_user
+def delete_trip(trip_id):
+    g.storage.delete_trip_by_id(trip_id)
+    flash("Trip deleted.", "success")
+    return redirect(url_for('index'))
+
+
+@app.route("/trips/new")
+@require_logged_in_user
+def plan_new_trip():
+    return render_template("create_trip.html")
+
+
+@app.route("/trips/new", methods=["POST"])
 @require_logged_in_user
 def create_trip():
     destination = request.form['destination'].strip()
@@ -166,92 +205,22 @@ def create_trip():
         return render_template("create_trip.html", destination=destination, start_date=start_date, end_date=end_date)
 
     g.storage.create_new_trip(destination, start_date, end_date, session['user_id'])
-    flash('Your new adventure has been created', "success")
+    flash('Your new adventure has been created!', "success")
     return redirect(url_for('index'))
 
-# Sanitize and validate inputs, such as cost and activity title
-@app.route("/trips/<int:trip_id>/activity/add", methods = ["POST"])
-@require_logged_in_user
-def add_new_plan(trip_id):
-    date = request.form['date'] or None
-    time = request.form['time'] or None
-    activity = request.form['activity'].strip()
-    note = request.form['note'].strip() or None
-    cost = clean_cost_input(request.form['cost']) or None
 
-    time_pattern = re.compile(r"^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM|am|pm)$")
-    if time and not time_pattern.match(time):
-        flash("Invalid time format. Please use HH:MM AM/PM (e.g., 08:30 PM).", "error")
-        return redirect(url_for("show_trip_to_edit", trip_id=trip_id))
-
-    error = error_for_activity_title(activity)
-    if error:
-        flash(error, "error")
-        return redirect(url_for('trip_schedule', 
-                                trip_id=trip_id, 
-                                time=time, 
-                                activity=activity, 
-                                note=note, 
-                                cost=cost)
-                                )
-
-    g.storage.add_new_activity(date, time, activity, note, cost, trip_id)
-    flash("Activity added.", "success")
-    return redirect(url_for('trip_schedule', trip_id = trip_id))
-
-@app.route("/trips/<int:trip_id>/activities/<int:activity_id>/edit", methods=["GET"])
-def show_activity_to_edit(trip_id, activity_id):
-    trip = g.storage.find_trip_by_id(trip_id)
-
-    if not trip: 
-        flash("Trip not found.", "error")
-        return redirect(url_for(index))
-
-    schedule = g.storage.get_itinerary(trip_id)
-    plans_by_date = {}
-
-    for activity in schedule: 
-        date = activity['at_date'] or 'No Dates'
-        if date not in plans_by_date:
-            plans_by_date[date] = []
-
-        plans_by_date[date].append(activity)
-    return render_template("itinerary.html", plans_by_date=plans_by_date, trip=trip, edit_activity_id=activity_id)
-
-
-@app.route("/trips/<int:trip_id>/activities/<int:activity_id>/edit", methods=["POST"])
-def edit_activity(trip_id, activity_id):
-    time = request.form['time'] or None
-    activity = request.form['activity'].strip()
-    note = request.form['note'].strip() or None
-    cost = clean_cost_input(request.form['cost']) or None
-
-    error = error_for_activity_title(activity)
-    if error:
-        flash(error, "error")
-        return redirect(url_for('edit_activity', trip_id = trip_id, activity_id=activity_id))
-
-    g.storage.edit_activity_info(time, activity, note, cost, trip_id, activity_id)
-    flash("Itinerary successfull updated!", "success")
-    return redirect(url_for('trip_schedule', trip_id=trip_id))
-
+# ---- ITINERARY ----
 @app.route("/trips/<int:trip_id>")
 @require_logged_in_user
 def trip_schedule(trip_id):
-    trip = g.storage.find_trip_by_id(trip_id)
-
-    if not trip: 
-        flash("Trip not found.", "error")
-        return redirect(url_for(index))
-
     schedule = g.storage.get_itinerary(trip_id)
+    trip = get_trip_heading(schedule, trip_id, g.storage)
+    
     plans_by_date = {}
-
-    for activity in schedule: 
-        date = activity['at_date'] or 'No Dates'
+    for activity in schedule:
+        date = activity['at_date'] or ""
         if date not in plans_by_date:
             plans_by_date[date] = []
-
         plans_by_date[date].append(activity)
 
     time = request.args.get("time", "")
@@ -268,40 +237,83 @@ def trip_schedule(trip_id):
                            cost=cost,
                            )
 
+
+@app.route("/trips/<int:trip_id>/activities/<int:activity_id>/edit", methods=["GET"])
+@require_logged_in_user
+def show_activity_to_edit(trip_id, activity_id):
+    schedule = g.storage.get_itinerary(trip_id)
+    trip = get_trip_heading(schedule, trip_id, g.storage)
+    plans_by_date = {}
+
+    for activity in schedule: 
+        date = activity['at_date'] or ""
+        if date not in plans_by_date:
+            plans_by_date[date] = []
+
+        plans_by_date[date].append(activity)
+    return render_template("itinerary.html", plans_by_date=plans_by_date, trip=trip, edit_activity_id=activity_id)
+
+
+@app.route("/trips/<int:trip_id>/activity/add", methods = ["POST"])
+@require_logged_in_user
+def add_new_plan(trip_id):
+    date = request.form['date'] or None
+    time = request.form['time'] or None
+    activity = request.form['activity'].strip()
+    note = request.form['note'].strip() or None
+    cost = remove_punc_for_cost(request.form['cost']) or None
+
+    error = error_for_activity_input(date, time, activity, cost)
+    if error:
+        flash(error, "error")
+        return redirect(url_for('trip_schedule', 
+                                trip_id=trip_id, 
+                                time=time, 
+                                activity=activity, 
+                                note=note, 
+                                cost=cost)
+                                )
+
+    g.storage.add_new_activity(date, time, activity, note, cost, trip_id)
+    flash("Activity added.", "success")
+    return redirect(url_for('trip_schedule', trip_id = trip_id))
+
+
+
+@app.route("/trips/<int:trip_id>/activities/<int:activity_id>/edit", methods=["POST"])
+@require_logged_in_user
+def edit_activity(trip_id, activity_id):
+    time = request.form['time'] or None
+    activity = request.form['activity'].strip()
+    note = request.form['note'].strip() or None
+    cost = remove_punc_for_cost(request.form['cost']) or None
+
+    error = error_for_activity_input('', time, activity, cost)
+    if error:
+        flash(error, "error")
+        return redirect(url_for('edit_activity', trip_id = trip_id, activity_id=activity_id))
+
+    g.storage.edit_activity_info(time, activity, note, cost, trip_id, activity_id)
+    flash("Itinerary updated!", "success")
+    return redirect(url_for('trip_schedule', trip_id=trip_id))
+
+
 @app.route("/trips/<int:trip_id>/days/<day>/delete", methods=["POST"])
 @require_logged_in_user
 def delete_trip_day(trip_id, day):
     day = None if day == 'no_date' else day
     g.storage.delete_day_for_trip(trip_id, day)
-    flash("The day has been successfully deleted", "success")
+    flash("Day deleted.", "success")
     return redirect(url_for('trip_schedule', trip_id=trip_id))
+
 
 @app.route("/trips/<int:trip_id>/activiites/<int:activity_id>/delete", methods=["POST"])
 @require_logged_in_user
 def delete_activity(trip_id, activity_id):
     g.storage.delete_activity_by_id(trip_id, activity_id)
-    flash("Plan successfully deleted", "success")
+    flash("Activity deleted.", "success")
     return redirect(url_for('trip_schedule', trip_id = trip_id))
 
-
-@app.route("/trips/<int:trip_id>", methods=['POST'])
-@require_logged_in_user
-def delete_trip(trip_id):
-    g.storage.delete_trip_by_id(trip_id)
-    flash("The trip has been deleted", "success")
-    return redirect(url_for('index'))
-
-@app.route("/trips/new")
-@require_logged_in_user
-def plan_new_trip():
-    return render_template("create_trip.html")
-
-@app.route("/signout", methods=["POST"])
-@require_logged_in_user
-def signout():
-    session.clear()
-    flash("You have been signed out", "success")
-    return redirect(url_for('show_login_form'))
 
 if __name__ == "__main__":
     app.run(debug=True, port=5003)

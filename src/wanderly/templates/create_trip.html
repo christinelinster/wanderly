@@ -14,7 +14,7 @@
         </div>
         <div class="new-trip-form">
             <form class="new-trip-info" action="{{ url_for('create_trip')}}" method="post">
-                <input class="destination" type="text" name="destination" value="{{ destination }}" placeholder="Trip Name">
+                <input class="destination" type="text" name="destination" value="{{ destination }}" placeholder="Trip Name" required>
                 <input type="date" name="start-date" value="{{ start_date }}" placeholder="Start Date">
                 <input type="date" name="end-date" value="{{ end_date }}" placeholder="End Date">
 

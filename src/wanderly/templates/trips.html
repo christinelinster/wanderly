@@ -19,14 +19,14 @@
         {% for trip in trips %}
         {% if edit_trip_id and edit_trip_id == trip.id %}
 
-
         <form class="edit-trip-form" action="{{ url_for('edit_trip', trip_id=trip.id)}}" method="post">
             <div class="trip-icon">
                 <i class="icon fa-solid fa-location-dot fa-lg"></i>
             </div>
 
             <div class="trip-info">
-                <h2 class="trip-name"><input value="{{ trip.destination }}" type="text" name="destination" required></h2>
+                <h2 class="trip-name"><input value="{{ trip.destination }}" type="text" name="destination" required>
+                </h2>
                 <div class="trip-dates">
                     <span class="trip-dates-text">
                         <input value="{{trip.depart_date }}" type="date" name="start_date">
@@ -40,8 +40,6 @@
                 <button class="btn-create" type="submit">Save</button>
             </div>
         </form>
-
-
 
         {% else %}
 

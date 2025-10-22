@@ -47,8 +47,8 @@
                         <h3 class="day-title">{{ date | formatted_date }}</h3>
                     </div>
                     <div class="trip-actions">
-                        <form
-                            action="{{ url_for('delete_trip_day', trip_id=trip.id, day='no_date' if date=='No Dates' else date) }}"
+                        <form class="delete"
+                            action="{{ url_for('delete_trip_day', trip_id=trip.id, day=date or 'no-date') }}"
                             method="post">
                             <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
                         </form>
