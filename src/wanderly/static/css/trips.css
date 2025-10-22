@@ -133,7 +133,33 @@
     min-width: 0;
 }
 
+form.edit-trip-form input{
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  padding: 0.5rem;
+  align-self: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  outline: none;
+  width: 8rem;
+}
+
+form.edit-trip-form .trip-name > input {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 700;
+    width: 16.75rem;
+}
+
+.edit-trip-form input:focus{
+    outline: 1px solid rgba(0, 0, 0, 0.1);
+}
+form.edit-trip-form .trip-dates-text{
+    width: 100%;
+}
+
 .trip-name {
+    display: flex;
     margin: 0 0 0.5rem 0;
     font-size: 1.25rem;
     font-family: var(--font-heading);

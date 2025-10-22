@@ -23,8 +23,8 @@
         <div class="new-day-container">
             <form class="new-day-info" action="{{ url_for('add_new_plan', trip_id = trip.id) }}" method="post">
                 <input type="date" name="date">
-                <input class="activity-time" type="text" name="time" placeholder="HH:MM"
-                    pattern='(1[0-2]|0?[1-9]):[0-5][0-9]\s?(am|pm|AM|PM)'>
+                <input class="activity-time" type="text" name="time" placeholder="HH:MM AM/PM"
+                    pattern='^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM|am|pm)$'>
                 <input class="activity-title" type="text" name="activity" placeholder="Activity" required>
                 <input class="activity-note" type="text" name="note" placeholder="Notes">
                 <input class="activity-cost" type="text" name="cost" inputmode="decimal"

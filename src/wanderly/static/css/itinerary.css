@@ -44,11 +44,14 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 6px;
   font-family: var(--font-body);
-  width: 8rem;
+  width: 7rem;
 }
 
-.new-day-info .activity-cost,
-.new-day-info .activity-time {
+.new-day-info .activity-time{
+  width: 6.5rem;
+}
+
+.new-day-info .activity-cost{
   width: 4rem;
 }
 
@@ -73,12 +76,12 @@
 
 .itinerary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(580px,0.3fr));
+  grid-template-columns: repeat(auto-fit, minmax(580px, 0.3fr));
   justify-content: center;
   gap: 1.5rem;
 }
 
-.itinerary .no-activity{
+.itinerary .no-activity {
   display: flex;
   justify-content: center;
 }
@@ -129,7 +132,8 @@
 
 .day-actions,
 .activity,
-.activity-label, form.activity{
+.activity-label,
+form.activity {
   display: contents;
 }
 
@@ -140,7 +144,7 @@
   margin: 0 0 0.5rem 0;
 }
 
-.activity>p{
+.activity>p {
   padding: 0;
   margin: 0;
   font-family: var(--font-body);
@@ -149,8 +153,8 @@
   align-items: start;
 }
 
-form.activity input{
-width: 100%;
+form.activity input {
+  width: 100%;
   box-sizing: border-box;
   font-family: var(--font-body);
   padding: 0.5rem;
@@ -160,11 +164,11 @@ width: 100%;
   outline: none;
 }
 
-form.activity input:focus{
+form.activity input:focus {
   outline: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.day-actions input{
+.day-actions input {
   width: 100%;
   box-sizing: border-box;
   font-family: var(--font-body);

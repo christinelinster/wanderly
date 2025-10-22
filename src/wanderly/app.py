@@ -22,7 +22,7 @@ from utils import (
     error_for_trips,
     error_for_create_user
 )
-
+import re
 from functools import wraps
 import bcrypt
 import secrets
@@ -178,6 +178,11 @@ def add_new_plan(trip_id):
     activity = request.form['activity'].strip()
     note = request.form['note'].strip() or None
     cost = clean_cost_input(request.form['cost']) or None
+
+    time_pattern = re.compile(r"^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM|am|pm)$")
+    if time and not time_pattern.match(time):
+        flash("Invalid time format. Please use HH:MM AM/PM (e.g., 08:30 PM).", "error")
+        return redirect(url_for("show_trip_to_edit", trip_id=trip_id))
 
     error = error_for_activity_title(activity)
     if error:
