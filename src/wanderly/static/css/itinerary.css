@@ -71,7 +71,6 @@
 }
 
 
-/* Fix this later */
 .itinerary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(580px,0.3fr));
@@ -130,7 +129,7 @@
 
 .day-actions,
 .activity,
-.activity-label {
+.activity-label, form.activity{
   display: contents;
 }
 
@@ -141,7 +140,7 @@
   margin: 0 0 0.5rem 0;
 }
 
-.activity>p {
+.activity>p{
   padding: 0;
   margin: 0;
   font-family: var(--font-body);
@@ -150,7 +149,22 @@
   align-items: start;
 }
 
-.day-actions input {
+form.activity input{
+width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  padding: 0.5rem;
+  align-self: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  outline: none;
+}
+
+form.activity input:focus{
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.day-actions input{
   width: 100%;
   box-sizing: border-box;
   font-family: var(--font-body);

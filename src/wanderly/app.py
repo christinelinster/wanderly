@@ -121,7 +121,7 @@ def show_trips():
         first_name = name.split()[0]
     return render_template("trips.html", trips=trips, first_name=first_name)
 
-@app.route("/trips/edit/<int:trip_id>", methods=["GET"])
+@app.route("/trips/<int:trip_id>/edit", methods=["GET"])
 @require_logged_in_user
 def show_trip_to_edit(trip_id):
     trips = g.storage.get_trips_by_user(session['user_id'])
@@ -131,7 +131,7 @@ def show_trip_to_edit(trip_id):
     return render_template("trips.html", trips=trips, first_name=first_name, edit_trip_id=trip_id)
 
 # Need to validate and sanitize input 
-@app.route("/trips/edit/<int:trip_id>", methods=["POST"])
+@app.route("/trips/<int:trip_id>/edit", methods=["POST"])
 @require_logged_in_user
 def edit_trip(trip_id):
     destination = request.form['destination'].strip()
@@ -164,7 +164,7 @@ def create_trip():
     return redirect(url_for('index'))
 
 # Sanitize and validate inputs, such as cost
-@app.route("/trips/<int:trip_id>/day/add", methods = ["POST"])
+@app.route("/trips/<int:trip_id>/activity/add", methods = ["POST"])
 @require_logged_in_user
 def add_new_plan(trip_id):
     date = request.form['date'] or None
@@ -177,24 +177,56 @@ def add_new_plan(trip_id):
     flash("Activity added.", "success")
     return redirect(url_for('trip_schedule', trip_id = trip_id))
 
+@app.route("/trips/<int:trip_id>/activities/<int:activity_id>/edit", methods=["GET"])
+def show_activity_to_edit(trip_id, activity_id):
+    trip = g.storage.find_trip_by_id(trip_id)
+
+    if not trip: 
+        flash("Trip not found.", "error")
+        return redirect(url_for(index))
+
+    schedule = g.storage.get_itinerary(trip_id)
+    plans_by_date = {}
+
+    for activity in schedule: 
+        date = activity['at_date'] or 'No Dates'
+        if date not in plans_by_date:
+            plans_by_date[date] = []
+
+        plans_by_date[date].append(activity)
+    return render_template("itinerary.html", plans_by_date=plans_by_date, trip=trip, edit_activity_id=activity_id)
+
+
+@app.route("/trips/<int:trip_id>/activities/<int:activity_id>/edit", methods=["POST"])
+def edit_activity(trip_id, activity_id):
+    time = request.form['time'] or None
+    title = request.form['activity']
+    note = request.form['note'] or None
+    cost = clean_cost_input(request.form['cost']) or None
+    g.storage.edit_activity_info(time, title, note, cost, trip_id, activity_id)
+    flash("Itinerary successfull updated!", "success")
+    return redirect(url_for('trip_schedule', trip_id=trip_id))
+
 @app.route("/trips/<int:trip_id>")
 @require_logged_in_user
 def trip_schedule(trip_id):
     trip = g.storage.find_trip_by_id(trip_id)
-    if trip: 
-        schedule = g.storage.get_itinerary(trip_id)
-        plans_by_date = {}
 
-        for activity in schedule: 
-            date = activity['at_date'] or 'No Dates'
-            if date not in plans_by_date:
-                plans_by_date[date] = []
+    if not trip: 
+        flash("Trip not found.", "error")
+        return redirect(url_for(index));
 
-            plans_by_date[date].append(activity)
+    schedule = g.storage.get_itinerary(trip_id)
+    plans_by_date = {}
 
-        return render_template("itinerary.html", plans_by_date=plans_by_date, trip=trip)
-    flash("The trip does not exist.", "error")
-    return redirect(url_for('index'))
+    for activity in schedule: 
+        date = activity['at_date'] or 'No Dates'
+        if date not in plans_by_date:
+            plans_by_date[date] = []
+
+        plans_by_date[date].append(activity)
+
+    return render_template("itinerary.html", plans_by_date=plans_by_date, trip=trip)
 
 @app.route("/trips/<int:trip_id>/days/<day>/delete", methods=["POST"])
 @require_logged_in_user

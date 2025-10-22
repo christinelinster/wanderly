@@ -24,11 +24,11 @@
             <form class="new-day-info" action="{{ url_for('add_new_plan', trip_id = trip.id) }}" method="post">
                 <input type="date" name="date">
                 <input class="activity-time" type="text" name="time" placeholder="HH:MM"
-                            pattern='(1[0-2]|0?[1-9]):[0-5][0-9]\s?(am|pm|AM|PM)'>
+                    pattern='(1[0-2]|0?[1-9]):[0-5][0-9]\s?(am|pm|AM|PM)'>
                 <input class="activity-title" type="text" name="activity" placeholder="Activity" required>
                 <input class="activity-note" type="text" name="note" placeholder="Notes">
-                <input class="activity-cost" type="text" name="cost"  inputmode="decimal" pattern="^\d{1,3}(,\d{3})*(\.\d{1,2})?$|^\d+(\.\d{1,2})?$"
- placeholder="$">
+                <input class="activity-cost" type="text" name="cost" inputmode="decimal"
+                    pattern="^\d{1,3}(,\d{3})*(\.\d{1,2})?$|^\d+(\.\d{1,2})?$" placeholder="$">
                 <button class="btn-create"><i class="icon fa-solid fa-plus"></i> New
                 </button>
             </form>
@@ -65,6 +65,27 @@
 
                     </div>
                     {% for act in activities %}
+
+                    {% if edit_activity_id and edit_activity_id == act.id %}
+                    <form class="activity" action="{{ url_for('edit_activity', trip_id=trip.id, activity_id=act.id)}}" method="post">
+                        <input class="activity-time" type="text" value="{{ act.at_time | formatted_time }}" name="time"
+                            placeholder="HH:MM" pattern='(1[0-2]|0?[1-9]):[0-5][0-9]\s?(am|pm|AM|PM)'>
+                        <input class="activity-title" type="text" value="{{ act.activity }}" name="activity"
+                            placeholder="Activity" required>
+                        <input class="activity-note" type="text" value="{{ act.note | safe_default }}" name="note"
+                            placeholder="Notes">
+                        <input class="activity-cost" type="text" value="{{ act.cost | safe_default_money }}" name="cost"
+                            inputmode="decimal" pattern="^\d{1,3}(,\d{3})*(\.\d{1,2})?$|^\d+(\.\d{1,2})?$"
+                            placeholder="$">
+
+                        <div class="trip-actions">
+                            <button class="btn-add" type="submit"><i class="fa-solid fa-check"></i></button>
+
+                        </div>
+                    </form>
+
+                    {% else %}
+
                     <div class="activity">
                         <p class="activity-time">{{ act.at_time | formatted_time}}</p>
                         <p class="activity-title"> {{ act.activity }}</p>
@@ -73,15 +94,18 @@
                         <p class="activity-cost">{{ act.cost |safe_default_money }}</p>
 
                         <div class="trip-actions">
-                            <form action="" method="post">
+                            <form action="{{ url_for('show_activity_to_edit', trip_id=trip.id, activity_id=act.id) }}"
+                                method="get">
                                 <button class="btn-edit" type="submit"><i class="icon fa-solid fa-pen"></i></button>
                             </form>
-                            <form action="{{ url_for('delete_activity', trip_id=trip.id, activity_id=act.id) }}" method="post">
+                            <form action="{{ url_for('delete_activity', trip_id=trip.id, activity_id=act.id) }}"
+                                method="post">
                                 <button class="btn-delete" type="submit"><i class="fa-solid fa-trash"></i></button>
                             </form>
 
                         </div>
                     </div>
+                    {% endif %}
                     {% endfor %}
 
                     <form class="day-actions" action="{{ url_for('add_new_plan', trip_id = trip.id)}}" method="post">

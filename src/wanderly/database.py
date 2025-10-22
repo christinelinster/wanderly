@@ -79,6 +79,7 @@ class Database:
             with conn.cursor() as cursor:
                 cursor.execute(query, values)
 
+# Fix this 
     def delete_day_for_trip(self, trip_id, day):
         if not day:
             query = 'DELETE FROM plans WHERE trip_id = %s and at_date IS NULL'
@@ -106,6 +107,13 @@ class Database:
     def edit_trip_heading(self, destination, start_date, end_date, trip_id):
         query = 'UPDATE trips SET destination = %s, depart_date = %s, return_date = %s WHERE id = %s'
         values = (destination, start_date, end_date, trip_id,)
+        with self._database_connect() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, values)
+
+    def edit_activity_info(self, time, title, note, cost, trip_id, activity_id):
+        query = 'UPDATE plans SET at_time = %s, activity=%s, note=%s, cost=%s WHERE trip_id = %s AND id = %s'
+        values = (time, title, note, cost, trip_id, activity_id, )
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(query, values)
