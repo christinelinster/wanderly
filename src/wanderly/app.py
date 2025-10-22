@@ -31,6 +31,7 @@ from utils import (
 )
 
 import secrets
+import os
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
@@ -316,4 +317,7 @@ def delete_activity(trip_id, activity_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5003)
+    if os.environ.get('FLASK_ENV') == 'production':
+        app.run(debug=False)
+    else:
+        app.run(debug=True, port=5003)

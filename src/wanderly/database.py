@@ -1,20 +1,78 @@
 import psycopg2
 from contextlib import contextmanager
 from psycopg2.extras import DictCursor
-from itertools import groupby
-from operator import itemgetter
+import os
 
 class Database:
     
     @contextmanager
     def _database_connect(self):
-        connection = psycopg2.connect(dbname='wanderly')
+        if os.environ.get('FLASK_ENV') =='production':
+            connection = psycopg2.connect(os.environ['DATABASE_URL'])
+        else:
+            connection = psycopg2.connect(dbname='wanderly')
+
         try:
             with connection:
                 yield connection
         finally:
             connection.close()
 
+    def __init__(self):
+        self._setup_schema()
+
+    def _setup_schema(self):
+        with self._database_connect() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute("""
+                               SELECT COUNT(*)
+                               FROM information_schema.tables
+                               WHERE tables_schema = 'public' AND table_name = 'users'
+                               """)
+                if cursor.fetchone()[0] == 0:
+                    cursor.execute("""
+                                   CREATE TABLE users(
+                                        id SERIAL PRIMARY KEY,
+                                        full_name varchar(255) NOT NULL, 
+                                        email varchar(255) UNIQUE NOT NULL,
+                                        password text NOT NULL,
+                                        created_at date NOT NULL DEFAULT now()
+                                    );
+                                   """)
+                cursor.execute("""
+                               SELECT COUNT(*)
+                               FROM information_schema.tables
+                               WHERE tables_schema = 'public' AND table_name = 'trips'
+                               """)
+                if cursor.fetchone()[0] == 0:
+                    cursor.execute("""
+                                   CREATE TABLE trips(
+                                        id serial PRIMARY KEY,
+                                        destination text NOT NULL, 
+                                        depart_date date,
+                                        return_date date,
+                                        user_id integer NOT NULL REFERENCES users(id) ON DELETE CASCADE
+                                    );
+                                   """)
+                cursor.execute("""
+                               SELECT COUNT(*)
+                               FROM information_schema.tables
+                               WHERE tables_schema = 'public' AND table_name = 'plans'
+                               """)
+                if cursor.fetchone()[0] == 0:
+                    cursor.execute("""
+                                   CREATE TABLE plans(
+                                        id serial PRIMARY KEY,
+                                        at_date date,
+                                        at_time time,
+                                        activity text NOT NULL,
+                                        cost numeric CHECK (cost >= 0.00),
+                                        note text,
+                                        trip_id integer NOT NULL,
+                                        FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
+                                    );
+                                    """)
+                
 # -------- AUTH -------- 
     def user_exists(self, email):
         return True if self.get_user_credentials(email) else False

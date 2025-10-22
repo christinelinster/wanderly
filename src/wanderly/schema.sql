@@ -7,12 +7,6 @@ CREATE TABLE users(
     created_at date NOT NULL DEFAULT now()
 );
 
--- ADD A DATES TABLE? 
-CREATE TABLE dates(
-    id SERIAL PRIMARY KEY,
-    title text
-)
-
 CREATE TABLE trips(
     id serial PRIMARY KEY,
     destination text NOT NULL, 
@@ -26,9 +20,9 @@ CREATE TABLE plans(
     at_date date,
     at_time time,
     activity text NOT NULL,
-    cost numeric CHECK (cost > 0),
+    cost numeric CHECK (cost >= 0.00),
     note text,
-    vacation_id integer NOT NULL,
-    FOREIGN KEY (vacation_id) REFERENCES vacations(id) ON DELETE CASCADE,
+    trip_id integer NOT NULL,
+    FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
 );
 
