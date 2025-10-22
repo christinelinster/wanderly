@@ -26,8 +26,8 @@ class Database:
             with conn.cursor() as cursor:
                 cursor.execute("""
                                SELECT COUNT(*)
-                               FROM information_schema.tables
-                               WHERE tables_schema = 'public' AND table_name = 'users'
+                               FROM information_schema.tables 
+                               WHERE table_schema = 'public' AND table_name = 'users'
                                """)
                 if cursor.fetchone()[0] == 0:
                     cursor.execute("""
@@ -42,7 +42,7 @@ class Database:
                 cursor.execute("""
                                SELECT COUNT(*)
                                FROM information_schema.tables
-                               WHERE tables_schema = 'public' AND table_name = 'trips'
+                               WHERE table_schema = 'public' AND table_name = 'trips'
                                """)
                 if cursor.fetchone()[0] == 0:
                     cursor.execute("""
@@ -57,7 +57,7 @@ class Database:
                 cursor.execute("""
                                SELECT COUNT(*)
                                FROM information_schema.tables
-                               WHERE tables_schema = 'public' AND table_name = 'plans'
+                               WHERE table_schema = 'public' AND table_name = 'plans'
                                """)
                 if cursor.fetchone()[0] == 0:
                     cursor.execute("""
