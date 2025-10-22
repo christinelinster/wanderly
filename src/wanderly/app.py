@@ -113,6 +113,10 @@ def login():
     email = request.form['email'].strip()
     password = request.form['password'].strip()
 
+    if not g.storage.user_exists(email):
+        flash("The email is not in our records.", "error")
+        return render_template('login.html')
+
     error = error_for_login(email, password)
     if error:
         flash(error, "error")
@@ -127,8 +131,8 @@ def login():
             next_page = url_for('index')
         return redirect(next_page)
 
-    flash("Invalid credentials", "error")
-    return render_template("login.html"), 401
+    flash("Invalid credentials.", "error")
+    return render_template("login.html")
 
 @app.route("/signout", methods=["POST"])
 @require_logged_in_user

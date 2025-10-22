@@ -69,7 +69,7 @@ class Database:
                                         cost numeric CHECK (cost >= 0.00),
                                         note text,
                                         trip_id integer NOT NULL,
-                                        FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
+                                        FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
                                     );
                                     """)
                 
