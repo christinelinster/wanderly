@@ -1,9 +1,6 @@
 from datetime import datetime
 import re
 
-def remove_punc_for_cost(cost):
-    return cost.replace(',', '')
-
 def error_for_trips(destination, start_date, end_date):
     if not destination:
         return "You must provide a the trip name."
@@ -68,3 +65,6 @@ def get_trip_heading(schedule, trip_id, storage):
     else:
         trip = storage.find_trip_by_id(trip_id)
     return trip
+
+def remove_punc_for_cost(cost):
+    return cost.replace(',', '')

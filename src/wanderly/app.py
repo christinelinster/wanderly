@@ -35,7 +35,7 @@ import os
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
-ITEMS_PER_PAGE = 2
+TRIPS_PER_PAGE = 3
 
 # ---- JINJA FILTERS ----
 app.jinja_env.filters['formatted_date'] = formatted_date
@@ -154,22 +154,41 @@ def index():
 @require_logged_in_user
 def show_trips():
     page = request.args.get('page', 1, type=int)
-    offset = (page - 1) * ITEMS_PER_PAGE
     total_items = g.storage.get_trip_count(session['user_id'])
-    pages = (total_items + ITEMS_PER_PAGE - 1) // ITEMS_PER_PAGE
-    trips = g.storage.get_trips_by_user_id(session['user_id'], limit=ITEMS_PER_PAGE, offset=offset)
+    pages = (total_items + TRIPS_PER_PAGE - 1) // TRIPS_PER_PAGE
+    if page > pages and page > 1:
+        page -= 1
+
+    offset = (page - 1) * TRIPS_PER_PAGE
+
+    trips = g.storage.get_trips_by_user_id(session['user_id'], limit=TRIPS_PER_PAGE, offset=offset)
     first_name = get_first_name(trips, session['user_id'], g.storage)
 
-    return render_template("trips.html", first_name=first_name, trips=trips, current_page=page, pages=pages)
+    return render_template("trips.html", 
+                           first_name=first_name, 
+                           trips=trips, 
+                           current_page=page, 
+                           pages=pages
+                           )
 
 
 @app.route("/trips/<int:trip_id>/edit", methods=["GET"])
 @require_logged_in_user
 def show_trip_to_edit(trip_id):
-    trips = g.storage.get_trips_by_user_id(session['user_id'])
+    page = request.args.get('page', 1, type=int)
+    offset = (page - 1) * TRIPS_PER_PAGE
+    total_items = g.storage.get_trip_count(session['user_id'])
+    pages = (total_items + TRIPS_PER_PAGE - 1) // TRIPS_PER_PAGE
+    trips = g.storage.get_trips_by_user_id(session['user_id'], limit=TRIPS_PER_PAGE, offset=offset)
     first_name = get_first_name(trips, session['user_id'], g.storage)
-    return render_template("trips.html", trips=trips, first_name=first_name, edit_trip_id=trip_id)
 
+    return render_template("trips.html", 
+                           first_name=first_name, 
+                           trips=trips, 
+                           edit_trip_id=trip_id, 
+                           current_page=page, 
+                           pages=pages
+                           )
 
 @app.route("/trips/<int:trip_id>/edit", methods=["POST"])
 @require_logged_in_user
@@ -177,23 +196,25 @@ def edit_trip(trip_id):
     destination = request.form['destination'].strip()
     start_date = request.form['start_date'] or None
     end_date = request.form['end_date'] or None
+    page = request.form.get('page', 1, type=int)
 
     error = error_for_trips(destination, start_date, end_date)
     if error:
         flash(error, "error")
-        return redirect(url_for('show_trip_to_edit', trip_id=trip_id))
+        return redirect(url_for('show_trip_to_edit', trip_id=trip_id, page=page))
 
     g.storage.edit_trip_heading(destination, start_date, end_date, trip_id)
     flash("Trip saved.", "success")
-    return redirect(url_for('index'))
+    return redirect(url_for('show_trips', page=page))
 
 
 @app.route("/trips/<int:trip_id>", methods=['POST'])
 @require_logged_in_user
 def delete_trip(trip_id):
+    page = request.form.get('page', 1, type=int)
     g.storage.delete_trip_by_id(trip_id)
     flash("Trip deleted.", "success")
-    return redirect(url_for('index'))
+    return redirect(url_for('show_trips',page=page))
 
 
 @app.route("/trips/new")
@@ -208,15 +229,18 @@ def create_trip():
     destination = request.form['destination'].strip()
     start_date = request.form['start-date'] or None
     end_date = request.form['end-date'] or None
-
+    
     error = error_for_trips(destination, start_date, end_date)
     if error:
         flash(error, "error")
         return render_template("create_trip.html", destination=destination, start_date=start_date, end_date=end_date)
 
     g.storage.create_new_trip(destination, start_date, end_date, session['user_id'])
+    total_items = g.storage.get_trip_count(session['user_id'])
+    page = (total_items + TRIPS_PER_PAGE - 1) // TRIPS_PER_PAGE
+
     flash('Your new adventure has been created!', "success")
-    return redirect(url_for('index'))
+    return redirect(url_for('show_trips', page=page))
 
 
 # ---- ITINERARY ----
@@ -225,6 +249,10 @@ def create_trip():
 def show_trip_schedule(trip_id):
     schedule = g.storage.get_itinerary(trip_id)
     trip = get_trip_heading(schedule, trip_id, g.storage)
+
+    if not trip:
+        flash("Trip not found.", "error")
+        return redirect(url_for('show_trips'))
     
     plans_by_date = {}
     for activity in schedule:

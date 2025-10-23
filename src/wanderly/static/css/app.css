@@ -101,6 +101,7 @@ header{
   border-radius: 6px;
   cursor: pointer;
   background: none;
+  color: var(--dark-blue);
 }
 
 .btn-create {
@@ -161,3 +162,7 @@ header{
   background:var(--dark-blue)
 }
 
+.pagination a{
+  color: var(--text-gray);
+  text-decoration: none;
+}
