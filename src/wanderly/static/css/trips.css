@@ -1,27 +1,24 @@
 .trips-main {
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  width: 100%;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    width: 100%;
+    align-items: center;
 }
 
 .greeting {
     text-align: center;
-    padding: 2rem 1rem;
 }
-
 
 .greeting-name {
     color: var(--light-blue);
 }
 
-
 .greeting-title {
     font-family: var(--font-heading);
-    font-size: 3rem;
+    font-size: 2.5rem;
     font-weight: 600;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
     color: var(--text-dark);
     margin: 0 0 0.5rem 0;
 
@@ -29,7 +26,7 @@
 
 .greeting-subtitle {
     font-family: var(--font-body);
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: var(--text-gray);
     margin: 0;
     font-weight: 300;
@@ -42,17 +39,24 @@
     gap: 0.5rem;
     padding: 1rem;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1000px;
     margin: 1rem auto;
     box-sizing: border-box;
- align-items: center;
+    align-items: center;
 }
 
+@media (max-width: 864px) {
+    .greeting-title {
+        font-size: 2rem;
+    }
+}
 
 @media (max-width: 640px) {
     .trips-container {
         padding: 0.5rem;
     }
+
+
 }
 
 @media(max-width: 480px) {
@@ -61,7 +65,8 @@
     }
 }
 
-.trip-card, .edit-trip-form {
+.trip-card,
+.edit-trip-form {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -70,7 +75,7 @@
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(10px);
-    transition: 
+    transition:
         transform 0.2s ease,
         box-shadow 0.2s ease,
         background-color 0.2s ease;
@@ -81,13 +86,14 @@
 }
 
 
+
 .trip-card:hover {
     transform: translate(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     background-color: rgba(255, 255, 255, 0.7);
 }
 
-.trip-card>a {
+.trip-card>a, .edit-trip-form .trip-heading{
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -129,38 +135,40 @@
 
 
 .trip-info {
-    flex: 1;
-    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 0.5rem;
 }
 
-form.edit-trip-form input{
-  box-sizing: border-box;
-  font-family: var(--font-body);
-  padding: 0.5rem;
-  align-self: center;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
-  outline: none;
-  width: 8rem;
+form.edit-trip-form input {
+    box-sizing: border-box;
+    font-family: var(--font-body);
+    padding: 0.3rem;
+    align-self: center;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    outline: none;
+    width: 8rem;
 }
 
-form.edit-trip-form .trip-name > input {
+form.edit-trip-form .trip-name>input {
     font-family: var(--font-heading);
     font-size: 1rem;
     font-weight: 700;
     width: 16.75rem;
 }
 
-.edit-trip-form input:focus{
+.edit-trip-form input:focus {
     outline: 1px solid rgba(0, 0, 0, 0.1);
 }
-form.edit-trip-form .trip-dates-text{
+
+form.edit-trip-form .trip-dates-text {
     width: 100%;
 }
 
 .trip-name {
-    display: flex;
-    margin: 0 0 0.5rem 0;
+    margin: 0;
     font-size: 1.25rem;
     font-family: var(--font-heading);
     overflow: hidden;
@@ -168,12 +176,12 @@ form.edit-trip-form .trip-dates-text{
     white-space: nowrap;
 }
 
-.trip-dates {
+div.trip-dates {
+    margin: 0;
     display: flex;
     gap: 0.5rem;
     align-items: center;
     color: var(--text-gray);
-    font-size: 0.9rem;
     letter-spacing: 0.5px;
 }
 

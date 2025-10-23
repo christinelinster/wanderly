@@ -94,6 +94,14 @@ class Database:
     
 
 # -------- TRIPS --------
+    def get_trip_count(self, user_id):
+        query = 'SELECT COUNT(*) FROM trips where user_id = %s'
+        with self._database_connect() as conn:
+            with conn.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(query, (user_id,))
+                row =  cursor.fetchone()
+        return row['count']
+
     def get_name_by_id(self, user_id):
         query = 'SELECT full_name from users WHERE id = %s'
         with self._database_connect() as conn:
@@ -102,18 +110,19 @@ class Database:
                 row = cursor.fetchone()
         return row['full_name']
     
-    def get_trips_by_user_id(self, user_id):
+    def get_trips_by_user_id(self, user_id, limit, offset):
         query = """
                 SELECT users.full_name AS name, trips.* 
                 FROM trips 
                 JOIN users ON trips.user_id = users.id 
                 WHERE trips.user_id = %s
                 ORDER BY trips.depart_date, trips.return_date, trips.id
+                LIMIT %s OFFSET %s
                 """
         
         with self._database_connect() as conn:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query, (user_id,))
+                cursor.execute(query, (user_id, limit, offset,))
                 trips = cursor.fetchall()
         return trips
     

@@ -35,6 +35,7 @@ import os
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
+ITEMS_PER_PAGE = 2
 
 # ---- JINJA FILTERS ----
 app.jinja_env.filters['formatted_date'] = formatted_date
@@ -152,10 +153,14 @@ def index():
 @app.route("/trips")
 @require_logged_in_user
 def show_trips():
-    trips = g.storage.get_trips_by_user_id(session['user_id'])
+    page = request.args.get('page', 1, type=int)
+    offset = (page - 1) * ITEMS_PER_PAGE
+    total_items = g.storage.get_trip_count(session['user_id'])
+    pages = (total_items + ITEMS_PER_PAGE - 1) // ITEMS_PER_PAGE
+    trips = g.storage.get_trips_by_user_id(session['user_id'], limit=ITEMS_PER_PAGE, offset=offset)
     first_name = get_first_name(trips, session['user_id'], g.storage)
 
-    return render_template("trips.html", trips=trips, first_name=first_name)
+    return render_template("trips.html", first_name=first_name, trips=trips, current_page=page, pages=pages)
 
 
 @app.route("/trips/<int:trip_id>/edit", methods=["GET"])
@@ -217,7 +222,7 @@ def create_trip():
 # ---- ITINERARY ----
 @app.route("/trips/<int:trip_id>")
 @require_logged_in_user
-def trip_schedule(trip_id):
+def show_trip_schedule(trip_id):
     schedule = g.storage.get_itinerary(trip_id)
     trip = get_trip_heading(schedule, trip_id, g.storage)
     
@@ -271,7 +276,7 @@ def add_new_plan(trip_id):
     error = error_for_activity_input(date, time, activity, cost)
     if error:
         flash(error, "error")
-        return redirect(url_for('trip_schedule', 
+        return redirect(url_for('show_trip_schedule', 
                                 trip_id=trip_id, 
                                 time=time, 
                                 activity=activity, 
@@ -281,7 +286,7 @@ def add_new_plan(trip_id):
 
     g.storage.add_new_activity(date, time, activity, note, cost, trip_id)
     flash("Activity added.", "success")
-    return redirect(url_for('trip_schedule', trip_id = trip_id))
+    return redirect(url_for('show_trip_schedule', trip_id = trip_id))
 
 
 
@@ -300,7 +305,7 @@ def edit_activity(trip_id, activity_id):
 
     g.storage.edit_activity_info(time, activity, note, cost, trip_id, activity_id)
     flash("Itinerary updated!", "success")
-    return redirect(url_for('trip_schedule', trip_id=trip_id))
+    return redirect(url_for('show_trip_schedule', trip_id=trip_id))
 
 
 @app.route("/trips/<int:trip_id>/days/<day>/delete", methods=["POST"])
@@ -309,7 +314,7 @@ def delete_trip_day(trip_id, day):
     day = None if day == 'no_date' else day
     g.storage.delete_day_for_trip(trip_id, day)
     flash("Day deleted.", "success")
-    return redirect(url_for('trip_schedule', trip_id=trip_id))
+    return redirect(url_for('show_trip_schedule', trip_id=trip_id))
 
 
 @app.route("/trips/<int:trip_id>/activiites/<int:activity_id>/delete", methods=["POST"])
@@ -317,7 +322,7 @@ def delete_trip_day(trip_id, day):
 def delete_activity(trip_id, activity_id):
     g.storage.delete_activity_by_id(trip_id, activity_id)
     flash("Activity deleted.", "success")
-    return redirect(url_for('trip_schedule', trip_id = trip_id))
+    return redirect(url_for('show_trip_schedule', trip_id = trip_id))
 
 
 if __name__ == "__main__":

@@ -67,7 +67,8 @@
                     {% for act in activities %}
 
                     {% if edit_activity_id and edit_activity_id == act.id %}
-                    <form class="activity" action="{{ url_for('edit_activity', trip_id=trip.id, activity_id=act.id)}}" method="post">
+                    <form class="activity" action="{{ url_for('edit_activity', trip_id=trip.id, activity_id=act.id)}}"
+                        method="post">
                         <input class="activity-time" type="text" value="{{ act.at_time | formatted_time }}" name="time"
                             placeholder="HH:MM" pattern='(1[0-2]|0?[1-9]):[0-5][0-9]\s?(am|pm|AM|PM)'>
                         <input class="activity-title" type="text" value="{{ act.activity }}" name="activity"
@@ -112,9 +113,10 @@
                         <input type="date" name="date" value="{{ date }}" hidden>
                         <input type="text" name="time" value="{{ time }}" placeholder="HH:MM"
                             pattern='(1[0-2]|0?[1-9]):[0-5][0-9]\s?(am|pm|AM|PM)'>
-                        <input type="text" name="activity" value="{{ activity }}"placeholder="Add Activity" required>
+                        <input type="text" name="activity" value="{{ activity }}" placeholder="Add Activity" required>
                         <input type="text" name="note" value="{{ note }}" placeholder="Notes">
-                        <input type="text" value="{{ cost }}" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" name="cost" placeholder="$">
+                        <input type="text" value="{{ cost }}" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*"
+                            name="cost" placeholder="$">
 
                         <div>
                             <button class="btn-add" type="submit"><i class="icon fa-solid fa-plus"></i></button>

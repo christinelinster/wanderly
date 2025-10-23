@@ -23,6 +23,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: var(--font-body);
+  font-size: 0.9rem;
 }
 
 body {
@@ -72,6 +73,27 @@ header{
     padding: 1.5rem 1rem
   }
 }
+
+.pagination{
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  justify-content: center;
+  position: relative;
+  bottom: -50px;
+}
+
+.pagination .current-page{
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  font-family: var(--font-body);
+  color: var(--text-dark);
+}
+
 
 .btn-edit,
 .btn-delete {

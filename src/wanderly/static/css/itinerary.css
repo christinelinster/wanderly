@@ -35,20 +35,17 @@
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.5rem;
   justify-content: start;
 }
 
 .new-day-info input {
   padding: 0.5rem;
+  background: none;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 6px;
   font-family: var(--font-body);
-  width: 7rem;
-}
-
-.new-day-info .activity-time{
-  width: 6.5rem;
+  width: 7.5rem;
 }
 
 .new-day-info .activity-cost{
