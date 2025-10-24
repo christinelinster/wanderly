@@ -1,8 +1,6 @@
 {% extends 'layout.html' %}
 {% block content %}
-
-<main class="trip-main">
-    <div class="trip-container">
+    <div class="trip-main">
         <a class="home-redirect" href="{{ url_for('index') }}">
             <i class="icon fa-solid fa-arrow-left"></i>
             Back to Trips
@@ -127,7 +125,17 @@
             </div>
             {% endfor %}
         </div>
+    <div class="pagination">
+        {% if pages > 1 %}
+            {% for page_num in range(1, pages + 1) %}
+            {% if page_num == current_page %}
+            <strong class="current_page">{{ page_num }}</strong>
+            {% else %}
+                <a href="{{ url_for('show_trip_schedule', trip_id=trip.id, page=page_num) }}">{{ page_num }}</a>
+            {% endif %}
+            {% endfor %}
+        {% endif %}
     </div>
-</main>
+    </div>
 
 {% endblock%}

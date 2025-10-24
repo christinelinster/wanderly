@@ -1,9 +1,5 @@
-.trip-main {
-  display: flex;
-  width: 100%;
-}
 
-.trip-container {
+.trip-main {
   display: flex;
   flex-direction: column;
   width: 100%;

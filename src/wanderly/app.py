@@ -36,7 +36,7 @@ import os
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
 TRIPS_PER_PAGE = 8
-DAYS_PER_PAGE = 7
+DAYS_PER_PAGE = 4
 
 # ---- JINJA FILTERS ----
 app.jinja_env.filters['formatted_date'] = formatted_date
@@ -177,9 +177,11 @@ def show_trips():
 @require_logged_in_user
 def show_trip_to_edit(trip_id):
     page = request.args.get('page', 1, type=int)
-    offset = (page - 1) * TRIPS_PER_PAGE
     total_items = g.storage.get_trip_count(session['user_id'])
     pages = (total_items + TRIPS_PER_PAGE - 1) // TRIPS_PER_PAGE
+
+    offset = (page - 1) * TRIPS_PER_PAGE
+
     trips = g.storage.get_trips_by_user_id(session['user_id'], limit=TRIPS_PER_PAGE, offset=offset)
     first_name = get_first_name(trips, session['user_id'], g.storage)
 
@@ -262,18 +264,28 @@ def show_trip_schedule(trip_id):
             plans_by_date[date] = []
         plans_by_date[date].append(activity)
 
+    page = request.args.get('page', 1, type=int)
+    total_pages = (len(plans_by_date.keys()) + DAYS_PER_PAGE - 1) // DAYS_PER_PAGE
+
+    start = (page - 1) * DAYS_PER_PAGE
+    end = start + DAYS_PER_PAGE
+    page_dates = list(plans_by_date.keys())[start:end]
+    plans = {date:plans_by_date[date] for date in page_dates}
+
     time = request.args.get("time", "")
     activity = request.args.get("activity", "")
     note = request.args.get("note", "")
     cost = request.args.get("cost", "")
 
     return render_template("itinerary.html", 
-                           plans_by_date=plans_by_date, 
+                           plans_by_date=plans, 
                            trip=trip,
                            time=time,
                            activity=activity,
                            note=note,
                            cost=cost,
+                           current_page = page,
+                           pages=total_pages
                            )
 
 
