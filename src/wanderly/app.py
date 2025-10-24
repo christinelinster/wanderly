@@ -35,7 +35,8 @@ import os
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
-TRIPS_PER_PAGE = 3
+TRIPS_PER_PAGE = 8
+DAYS_PER_PAGE = 7
 
 # ---- JINJA FILTERS ----
 app.jinja_env.filters['formatted_date'] = formatted_date
@@ -339,7 +340,7 @@ def edit_activity(trip_id, activity_id):
 @app.route("/trips/<int:trip_id>/days/<day>/delete", methods=["POST"])
 @require_logged_in_user
 def delete_trip_day(trip_id, day):
-    day = None if day == 'no_date' else day
+    day = None if day == 'no-date' else day
     g.storage.delete_day_for_trip(trip_id, day)
     flash("Day deleted.", "success")
     return redirect(url_for('show_trip_schedule', trip_id=trip_id))

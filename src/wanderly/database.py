@@ -193,6 +193,10 @@ class Database:
         query = 'DELETE FROM plans WHERE trip_id = %s and at_date = %s'
         values = (trip_id, day,)
 
+        if not day: 
+            query = 'DELETE FROM plans WHERE trip_id = %s and at_date IS NULL'
+            values = (trip_id,)
+            
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(query, values)    

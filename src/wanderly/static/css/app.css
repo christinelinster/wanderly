@@ -79,8 +79,7 @@ header{
   gap: 0.5rem;
   width: 100%;
   justify-content: center;
-  position: relative;
-  bottom: -50px;
+  margin: 3rem auto 0;
 }
 
 .pagination .current-page{
