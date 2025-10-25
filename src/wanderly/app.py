@@ -95,7 +95,7 @@ def require_activity(f):
         activity = g.storage.find_activity_by_id(activity_id)
         if not activity:
             flash('Activity not found.', 'error')
-            return redirect(url_for('show_trip_schedule', trip_id=trip['id']))
+            return redirect(url_for('show_trip_schedule'))
         return f(activity, trip, *args, **kwargs)
     return decorated_function
 
@@ -169,7 +169,7 @@ def login():
 @require_logged_in_user
 def signout():
     session.clear()
-    flash("You have been signed out", "success")
+    flash("You have been signed out.", "success")
     return redirect(url_for('show_login_form'))
 
 
@@ -253,10 +253,9 @@ def edit_trip(trip, trip_id):
 @app.route("/trips/<int:trip_id>", methods=['POST'])
 @require_trip
 def delete_trip(trip, trip_id):
-    page = request.form.get('page', 1, type=int)
     g.storage.delete_trip_by_id(trip_id)
     flash("Trip deleted.", "success")
-    return redirect(url_for('show_trips',page=page))
+    return redirect(url_for('show_trips'))
 
 
 @app.route("/trips/new")
@@ -344,7 +343,7 @@ def show_activity_to_edit(activity, trip, trip_id, activity_id):
 
 @app.route("/trips/<int:trip_id>/activity/add", methods = ["POST"])
 @require_trip
-def add_new_plan(trip_id):
+def add_new_plan(trip, trip_id):
     page = request.form.get('page', 1, type=int)
     date = request.form['date'] or None
     time = request.form['time'] or None
@@ -389,12 +388,11 @@ def edit_activity(activity, trip, trip_id, activity_id):
 
 @app.route("/trips/<int:trip_id>/days/<day>/delete", methods=["POST"])
 @require_trip
-def delete_trip_day(trip_id, day):
-    page = request.form.get('page', 1, type=int)
+def delete_trip_day(trip, trip_id, day):
     day = None if day == 'no-date' else day
     g.storage.delete_day_for_trip(trip_id, day)
     flash("Day deleted.", "success")
-    return redirect(url_for('show_trip_schedule', trip_id=trip_id, page=page))
+    return redirect(url_for('show_trip_schedule', trip_id=trip_id))
 
 
 @app.route("/trips/<int:trip_id>/activiites/<int:activity_id>/delete", methods=["POST"])
