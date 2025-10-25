@@ -26,4 +26,4 @@ CREATE TABLE plans(
     FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
 );
 
----- SEED DATA ----
+

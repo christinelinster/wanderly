@@ -41,6 +41,23 @@ app.secret_key = secrets.token_hex(32)
 TRIPS_PER_PAGE = 8
 DAYS_PER_PAGE = 4
 
+# ---- SEED DATA ----
+def seed_user():
+    with app.app_context():
+        storage = Database()
+        user = {
+            'name':'launchschool', 
+            'email': 'launchschool@gmail.com', 
+            'password':'rocketlauncher1!'
+        }
+
+        if not storage.user_exists(user['email']):
+            hash = bcrypt.hashpw(user['password'].encode('utf-8'), bcrypt.gensalt())
+            storage.create_new_user(user['name'], user['email'], hash.decode('utf-8'))
+            print("Seed user created.")
+        else:
+            print("Seed user already exists.")
+
 # ---- JINJA FILTERS ----
 app.jinja_env.filters['formatted_date'] = formatted_date
 app.jinja_env.filters['formatted_time'] = formatted_time
@@ -408,4 +425,5 @@ if __name__ == "__main__":
     if os.environ.get('FLASK_ENV') == 'production':
         app.run(debug=False)
     else:
+        seed_user()
         app.run(debug=True, port=5003)
