@@ -1,8 +1,6 @@
 from datetime import datetime
 import re
 
-DAYS_PER_PAGE = 4
-
 def error_for_trips(destination, start_date, end_date):
     if not destination:
         return "You must provide a the trip name."

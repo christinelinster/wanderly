@@ -219,3 +219,11 @@ class Database:
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(query, values)
+
+    def find_activity_by_id(self, activity_id):
+        query = 'SELECT * FROM plans WHERE id = %s'
+        with self._database_connect() as conn:
+            with conn.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(query, (activity_id,))
+                activity = cursor.fetchone()
+        return activity

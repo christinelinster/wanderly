@@ -73,6 +73,7 @@ def require_logged_in_user(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
 def require_trip(f):
     @wraps(f)
     @require_logged_in_user
@@ -84,6 +85,20 @@ def require_trip(f):
             return redirect(url_for('index'))
         return f(trip, *args, **kwargs)
     return decorated_function
+
+
+def require_activity(f):
+    @wraps(f)
+    @require_trip
+    def decorated_function(trip, *args, **kwargs):
+        activity_id = kwargs.get('activity_id')
+        activity = g.storage.find_activity_by_id(activity_id)
+        if not activity:
+            flash('Activity not found.', 'error')
+            return redirect(url_for('show_trip_schedule', trip_id=trip['id']))
+        return f(activity, trip, *args, **kwargs)
+    return decorated_function
+
 
 # ---- BEFORE REQUEST -----
 @app.before_request
@@ -216,6 +231,7 @@ def show_trip_to_edit(trip, trip_id):
                            pages=pages
                            )
 
+
 @app.route("/trips/<int:trip_id>/edit", methods=["POST"])
 @require_trip
 def edit_trip(trip, trip_id):
@@ -303,20 +319,20 @@ def show_trip_schedule(trip, trip_id):
 
 
 @app.route("/trips/<int:trip_id>/activities/<int:activity_id>/edit", methods=["GET"])
-@require_trip
-@require_logged_in_user
-def show_activity_to_edit(trip, trip_id, activity_id):
+@require_activity
+def show_activity_to_edit(activity, trip, trip_id, activity_id):
     all_plans = g.storage.get_itinerary(trip_id)
     itinerary = plans_by_date(all_plans)
-    
+
     page = request.args.get('page', 1, type=int)
     pages = total_pages(len(itinerary.keys()), DAYS_PER_PAGE)
     error = error_for_page(page, pages)
     if error:
         flash(error['message'], 'error')
         return redirect(url_for('show_trip_schedule', trip_id=trip_id, page=error['page']))
-    plans = plans_per_page(itinerary, page, DAYS_PER_PAGE)
     
+    plans = plans_per_page(itinerary, page, DAYS_PER_PAGE)
+
     return render_template("itinerary.html", 
                            plans=plans, 
                            trip=trip, 
@@ -327,7 +343,7 @@ def show_activity_to_edit(trip, trip_id, activity_id):
 
 
 @app.route("/trips/<int:trip_id>/activity/add", methods = ["POST"])
-@require_logged_in_user
+@require_trip
 def add_new_plan(trip_id):
     page = request.form.get('page', 1, type=int)
     date = request.form['date'] or None
@@ -352,10 +368,9 @@ def add_new_plan(trip_id):
     return redirect(url_for('show_trip_schedule', trip_id = trip_id, page=page))
 
 
-
 @app.route("/trips/<int:trip_id>/activities/<int:activity_id>/edit", methods=["POST"])
-@require_logged_in_user
-def edit_activity(trip_id, activity_id):
+@require_activity
+def edit_activity(activity, trip, trip_id, activity_id):
     page = request.form.get('page', 1, type=int)
     time = request.form['time'] or None
     activity = request.form['activity'].strip()
@@ -373,7 +388,7 @@ def edit_activity(trip_id, activity_id):
 
 
 @app.route("/trips/<int:trip_id>/days/<day>/delete", methods=["POST"])
-@require_logged_in_user
+@require_trip
 def delete_trip_day(trip_id, day):
     page = request.form.get('page', 1, type=int)
     day = None if day == 'no-date' else day
@@ -383,8 +398,8 @@ def delete_trip_day(trip_id, day):
 
 
 @app.route("/trips/<int:trip_id>/activiites/<int:activity_id>/delete", methods=["POST"])
-@require_logged_in_user
-def delete_activity(trip_id, activity_id):
+@require_activity
+def delete_activity(activity, trip, trip_id, activity_id):
     page = request.form.get('page', 1, type=int)
     g.storage.delete_activity_by_id(trip_id, activity_id)
     flash("Activity deleted.", "success")
