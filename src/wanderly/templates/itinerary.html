@@ -35,11 +35,11 @@
 
 
         <div class="itinerary">
-            {% if not plans_by_date.items() %}
+            {% if not plans.items() %}
             <p class="no-activity">You don't have any plans yet!</p>
             {% endif %}
 
-            {% for date, activities in plans_by_date.items() %}
+            {% for date, activities in plans.items() %}
             <div class="itinerary-card">
                 <div class="day-header">
                     <div class="day-info">

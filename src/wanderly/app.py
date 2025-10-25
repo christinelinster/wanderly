@@ -26,7 +26,10 @@ from utils import (
     error_for_login,
     error_for_trips,
     get_first_name,
-    get_trip_heading,
+    error_for_page,
+    plans_by_date,
+    plans_per_page,
+    total_pages,
     remove_punc_for_cost,
 )
 
@@ -70,6 +73,17 @@ def require_logged_in_user(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def require_trip(f):
+    @wraps(f)
+    @require_logged_in_user
+    def decorated_function(*args, **kwargs):
+        trip_id = kwargs.get('trip_id')
+        trip = g.storage.find_trip_by_id(trip_id)
+        if not trip:
+            flash('Trip not found.', 'error')
+            return redirect(url_for('index'))
+        return f(trip, *args, **kwargs)
+    return decorated_function
 
 # ---- BEFORE REQUEST -----
 @app.before_request
@@ -156,9 +170,12 @@ def index():
 def show_trips():
     page = request.args.get('page', 1, type=int)
     total_items = g.storage.get_trip_count(session['user_id'])
-    pages = (total_items + TRIPS_PER_PAGE - 1) // TRIPS_PER_PAGE
-    if page > pages and page > 1:
-        page -= 1
+    pages = total_pages(total_items, TRIPS_PER_PAGE)
+    
+    error = error_for_page(page, pages)
+    if error:
+        flash(error['message'], 'error')
+        return redirect(url_for('show_trips', page=error['page']))
 
     offset = (page - 1) * TRIPS_PER_PAGE
 
@@ -173,12 +190,18 @@ def show_trips():
                            )
 
 
+# Create require activity decorator 
 @app.route("/trips/<int:trip_id>/edit", methods=["GET"])
-@require_logged_in_user
-def show_trip_to_edit(trip_id):
+@require_trip
+def show_trip_to_edit(trip, trip_id):
     page = request.args.get('page', 1, type=int)
     total_items = g.storage.get_trip_count(session['user_id'])
-    pages = (total_items + TRIPS_PER_PAGE - 1) // TRIPS_PER_PAGE
+    pages = total_pages(total_items, TRIPS_PER_PAGE)
+
+    error = error_for_page(page, pages)
+    if error:
+        flash(error['message'], 'error')
+        return redirect(url_for('show_trip_to_edit', trip_id=trip_id, page=error['page']))
 
     offset = (page - 1) * TRIPS_PER_PAGE
 
@@ -194,8 +217,8 @@ def show_trip_to_edit(trip_id):
                            )
 
 @app.route("/trips/<int:trip_id>/edit", methods=["POST"])
-@require_logged_in_user
-def edit_trip(trip_id):
+@require_trip
+def edit_trip(trip, trip_id):
     destination = request.form['destination'].strip()
     start_date = request.form['start_date'] or None
     end_date = request.form['end_date'] or None
@@ -212,8 +235,8 @@ def edit_trip(trip_id):
 
 
 @app.route("/trips/<int:trip_id>", methods=['POST'])
-@require_logged_in_user
-def delete_trip(trip_id):
+@require_trip
+def delete_trip(trip, trip_id):
     page = request.form.get('page', 1, type=int)
     g.storage.delete_trip_by_id(trip_id)
     flash("Trip deleted.", "success")
@@ -240,7 +263,7 @@ def create_trip():
 
     g.storage.create_new_trip(destination, start_date, end_date, session['user_id'])
     total_items = g.storage.get_trip_count(session['user_id'])
-    page = (total_items + TRIPS_PER_PAGE - 1) // TRIPS_PER_PAGE
+    page = total_pages(total_items, TRIPS_PER_PAGE)
 
     flash('Your new adventure has been created!', "success")
     return redirect(url_for('show_trips', page=page))
@@ -248,32 +271,19 @@ def create_trip():
 
 # ---- ITINERARY ----
 @app.route("/trips/<int:trip_id>")
-@require_logged_in_user
-def show_trip_schedule(trip_id):
-    schedule = g.storage.get_itinerary(trip_id)
-    trip = get_trip_heading(schedule, trip_id, g.storage)
-
-    if not trip:
-        flash("Trip not found.", "error")
-        return redirect(url_for('show_trips'))
-    
-    plans_by_date = {}
-    for activity in schedule:
-        date = activity['at_date'] or ""
-        if date not in plans_by_date:
-            plans_by_date[date] = []
-        plans_by_date[date].append(activity)
+@require_trip
+def show_trip_schedule(trip, trip_id):
+    all_plans = g.storage.get_itinerary(trip_id)
+    itinerary = plans_by_date(all_plans)
 
     page = request.args.get('page', 1, type=int)
-    pages = (len(plans_by_date.keys()) + DAYS_PER_PAGE - 1) // DAYS_PER_PAGE
-
-    if page > pages and page > 1:
-        page -= 1
-
-    start = (page - 1) * DAYS_PER_PAGE
-    end = start + DAYS_PER_PAGE
-    page_dates = list(plans_by_date.keys())[start:end]
-    plans = {date:plans_by_date[date] for date in page_dates}
+    pages = total_pages(len(itinerary.keys()), DAYS_PER_PAGE)
+    error = error_for_page(page, pages)
+    if error:
+        flash(error['message'], 'error')
+        return redirect(url_for('show_trip_schedule', trip_id=trip_id, page=error['page']))
+    
+    plans = plans_per_page(itinerary, page, DAYS_PER_PAGE)
 
     time = request.args.get("time", "")
     activity = request.args.get("activity", "")
@@ -281,7 +291,7 @@ def show_trip_schedule(trip_id):
     cost = request.args.get("cost", "")
 
     return render_template("itinerary.html", 
-                           plans_by_date=plans, 
+                           plans=plans, 
                            trip=trip,
                            time=time,
                            activity=activity,
@@ -293,30 +303,22 @@ def show_trip_schedule(trip_id):
 
 
 @app.route("/trips/<int:trip_id>/activities/<int:activity_id>/edit", methods=["GET"])
+@require_trip
 @require_logged_in_user
-def show_activity_to_edit(trip_id, activity_id):
-    schedule = g.storage.get_itinerary(trip_id)
-    trip = get_trip_heading(schedule, trip_id, g.storage)
-    plans_by_date = {}
-
-    for activity in schedule: 
-        date = activity['at_date'] or ""
-        if date not in plans_by_date:
-            plans_by_date[date] = []
-
-        plans_by_date[date].append(activity)
-
-    page = request.args.get('page', 1, type=int)
-    pages = (len(plans_by_date.keys()) + DAYS_PER_PAGE - 1) // DAYS_PER_PAGE
-
-    start = (page - 1) * DAYS_PER_PAGE
-    end = start + DAYS_PER_PAGE
-    page_dates = list(plans_by_date.keys())[start:end]
-    plans = {date:plans_by_date[date] for date in page_dates}
+def show_activity_to_edit(trip, trip_id, activity_id):
+    all_plans = g.storage.get_itinerary(trip_id)
+    itinerary = plans_by_date(all_plans)
     
+    page = request.args.get('page', 1, type=int)
+    pages = total_pages(len(itinerary.keys()), DAYS_PER_PAGE)
+    error = error_for_page(page, pages)
+    if error:
+        flash(error['message'], 'error')
+        return redirect(url_for('show_trip_schedule', trip_id=trip_id, page=error['page']))
+    plans = plans_per_page(itinerary, page, DAYS_PER_PAGE)
     
     return render_template("itinerary.html", 
-                           plans_by_date=plans, 
+                           plans=plans, 
                            trip=trip, 
                            edit_activity_id=activity_id,
                            current_page=page,

@@ -167,9 +167,8 @@ class Database:
 # -------- ITINERARY --------
     def get_itinerary(self, trip_id):
         query = """
-                SELECT trips.*, plans.* 
+                SELECT * 
                 FROM plans
-                JOIN trips ON plans.trip_id = trips.id
                 WHERE plans.trip_id = %s 
                 ORDER BY at_date, at_time, plans.id
                 """

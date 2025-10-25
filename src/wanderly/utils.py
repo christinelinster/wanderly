@@ -1,6 +1,8 @@
 from datetime import datetime
 import re
 
+DAYS_PER_PAGE = 4
+
 def error_for_trips(destination, start_date, end_date):
     if not destination:
         return "You must provide a the trip name."
@@ -53,18 +55,36 @@ def get_first_name(trips, user_id, storage):
 
     return name.split()[0]
 
-def get_trip_heading(schedule, trip_id, storage):
-    if schedule:
-       row = schedule[0]
-       trip = {
-           'id': row['trip_id'],
-           'destination': row['destination'],
-           'depart_date': row['depart_date'],
-           'return_date': row['return_date']
-       }
-    else:
-        trip = storage.find_trip_by_id(trip_id)
-    return trip
+def plans_by_date(all_plans):
+    plans_by_date = {}
+    for activity in all_plans:
+        date = activity['at_date'] or ""
+        if date not in plans_by_date:
+            plans_by_date[date] = []
+        plans_by_date[date].append(activity)
+    return plans_by_date
+
+def plans_per_page(itinerary, page, days_per_page):
+    start = (page - 1) * days_per_page
+    end = start + days_per_page
+    valid_days = list(itinerary.keys())[start:end]
+    page_days = {date:itinerary[date] for date in valid_days}
+    return page_days
+
+def error_for_page(page, pages):
+    temp_page = page
+    if temp_page > pages:
+        temp_page = pages
+    elif temp_page < 1:
+        temp_page = 1
+
+    if temp_page != page:
+        return {'message': 'Page not found. Redirected.', 'page': temp_page}
+    return None
+
+def total_pages(total_items, items_per_page):
+    pages = ((total_items + items_per_page - 1) // items_per_page) or 1
+    return pages
 
 def remove_punc_for_cost(cost):
     return cost.replace(',', '')
