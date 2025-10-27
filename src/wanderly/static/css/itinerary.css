@@ -93,7 +93,7 @@
 
 .day-activities {
   display: grid;
-  grid-template-columns: 80px 3fr 4fr 1fr auto;
+  grid-template-columns: 80px 80px 4fr 5fr 1fr auto;
   grid-auto-rows: auto;
   gap: 0.5rem 1rem;
   padding: 1.5rem 1rem;
@@ -141,19 +141,36 @@ form.activity {
   align-items: start;
 }
 
-form.activity input {
+form.activity input, form.activity textarea {
   width: 100%;
   box-sizing: border-box;
   font-family: var(--font-body);
-  padding: 0.5rem;
+  padding: 0.5rem 0;
   align-self: center;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
+  border: none;
+  background: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   outline: none;
+  color: var(--text-gray);
 }
 
 form.activity input:focus {
-  outline: 1px solid rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-orange);
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.date-input {
+  position: relative;
+  cursor: pointer;
+  text-align: center;
 }
 
 .day-actions input {
@@ -178,6 +195,9 @@ form.activity input:focus {
   color: var(--primary-orange);
 }
 
+.day-actions input[type='date'] {
+  visibility: hidden;
+}
 
 .activity>.activity-title {
   font-weight: 300;
@@ -194,7 +214,7 @@ form.activity input:focus {
   }
 
   .day-activities {
-    grid-template-columns: 2fr 3fr 2fr 1fr;
+    grid-template-columns: 40px 2fr 3fr 2fr 1fr;
   }
 
   .activity-label>.note,

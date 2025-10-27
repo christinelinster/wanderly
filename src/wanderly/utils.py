@@ -1,6 +1,19 @@
 from datetime import datetime
 import re
 
+def check_date_range(date, trip):
+    if date:
+        format_string = '%Y-%m-%d'
+        date = datetime.strptime(date, format_string).date()
+        print(date)
+        print(trip['depart_date'])
+        print(trip['return_date'])
+        print(trip['depart_date'] > date)
+        if trip['depart_date'] > date or date > trip['return_date']:
+            return "The activity date is outside of trip dates!"
+    return None
+
+
 def error_for_trips(destination, start_date, end_date):
     if not destination:
         return "You must provide a the trip name."

@@ -206,16 +206,17 @@ class Database:
             with conn.cursor() as cursor:
                 cursor.execute(query, (trip_id, activity_id,))
 
-    def edit_activity_info(self, time, title, note, cost, trip_id, activity_id):
+    def edit_activity_info(self, date, time, title, note, cost, trip_id, activity_id):
         query = """
                 UPDATE plans 
-                SET at_time = %s, 
+                SET at_date = %s,
+                at_time = %s, 
                 activity = %s, 
                 note = %s, 
                 cost = %s 
                 WHERE trip_id = %s AND id = %s
                 """
-        values = (time, title, note, cost, trip_id, activity_id, )
+        values = (date, time, title, note, cost, trip_id, activity_id, )
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(query, values)

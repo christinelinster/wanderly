@@ -2,8 +2,8 @@ import bcrypt
 from database import Database
 from filters import (
     formatted_date,
+    formatted_date_activity,
     formatted_time,
-    formatted_title_date,
     safe_default, 
     safe_default_money,
     )
@@ -21,6 +21,7 @@ from flask import (
 
 from functools import wraps
 from utils import (
+    check_date_range,
     error_for_activity_input,
     error_for_create_user,
     error_for_login,
@@ -60,8 +61,8 @@ def seed_user():
 
 # ---- JINJA FILTERS ----
 app.jinja_env.filters['formatted_date'] = formatted_date
+app.jinja_env.filters['formatted_date_activity'] = formatted_date_activity
 app.jinja_env.filters['formatted_time'] = formatted_time
-app.jinja_env.filters['formatted_title_date'] = formatted_title_date
 app.jinja_env.filters['safe_default'] = safe_default
 app.jinja_env.filters['safe_default_money'] = safe_default_money
 
@@ -316,7 +317,6 @@ def show_trip_schedule(trip, trip_id):
         return redirect(url_for('show_trip_schedule', trip_id=trip_id, page=error['page']))
     
     plans = plans_per_page(itinerary, page, DAYS_PER_PAGE)
-
     time = request.args.get("time", "")
     activity = request.args.get("activity", "")
     note = request.args.get("note", "")
@@ -378,6 +378,9 @@ def add_new_plan(trip, trip_id):
                                 note=note, 
                                 cost=cost)
                                 )
+    check = check_date_range(date, trip)
+    if check:
+        flash(check, "info")
 
     g.storage.add_new_activity(date, time, activity, note, cost, trip_id)
     flash("Activity added.", "success")
@@ -388,17 +391,19 @@ def add_new_plan(trip, trip_id):
 @require_activity
 def edit_activity(activity, trip, trip_id, activity_id):
     page = request.form.get('page', 1, type=int)
+    date = request.form['date'] or None
     time = request.form['time'] or None
     activity = request.form['activity'].strip()
     note = request.form['note'].strip() or None
     cost = remove_punc_for_cost(request.form['cost']) or None
 
-    error = error_for_activity_input('', time, activity, cost)
+    error = error_for_activity_input(date, time, activity, cost)
     if error:
-        flash(error, "error")
+        for err in error:
+            flash(err, "error")
         return redirect(url_for('edit_activity', trip_id = trip_id, activity_id=activity_id))
 
-    g.storage.edit_activity_info(time, activity, note, cost, trip_id, activity_id)
+    g.storage.edit_activity_info(date, time, activity, note, cost, trip_id, activity_id)
     flash("Itinerary updated!", "success")
     return redirect(url_for('show_trip_schedule', trip_id=trip_id, page=page))
 
