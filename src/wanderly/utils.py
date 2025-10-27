@@ -15,14 +15,27 @@ def check_date_range(date, trip):
 
 
 def error_for_trips(destination, start_date, end_date):
-    if not destination:
-        return "You must provide a the trip name."
+    errors = [] 
 
-    if start_date and end_date:
-        if start_date > end_date:
-            return "The return date must be after the departure date."
+    if not destination:
+        errors.append("You must provide a the trip name.")
     
-    return None
+    if start_date:
+        try:
+            datetime.strptime(start_date, '%Y-%m-%d')
+        except ValueError:
+            errors.append("Depart date must be in YYY-MM-DD format.")
+
+    if end_date:
+        try:
+            datetime.strptime(end_date, '%Y-%m-%d')
+        except ValueError:
+            errors.append("Return date must be in YYY-MM-DD format.")
+
+    if start_date and end_date and start_date > end_date:
+            errors.append("The return date must be after the departure date.")
+    
+    return errors
 
 def error_for_create_user(name, email, password):
     if not all([name, email, password]):

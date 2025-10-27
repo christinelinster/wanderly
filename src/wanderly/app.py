@@ -223,7 +223,6 @@ def show_trips():
                            )
 
 
-# Create require activity decorator 
 @app.route("/trips/<int:trip_id>/edit", methods=["GET"])
 @require_trip
 def show_trip_to_edit(trip, trip_id):
@@ -260,8 +259,9 @@ def edit_trip(trip, trip_id):
 
     error = error_for_trips(destination, start_date, end_date)
     if error:
-        flash(error, "error")
-        return redirect(url_for('show_trip_to_edit', trip_id=trip_id, page=page))
+        for err in error:
+            flash(err, "error")
+            return redirect(url_for('show_trip_to_edit', trip_id=trip_id, page=page))
 
     g.storage.edit_trip_heading(destination, start_date, end_date, trip_id)
     flash("Trip saved.", "success")
