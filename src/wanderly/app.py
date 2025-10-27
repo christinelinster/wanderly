@@ -201,7 +201,7 @@ def index():
 @app.route("/trips")
 @require_logged_in_user
 def show_trips():
-    page = request.args.get('page', 1, type=int)
+    page = request.args.get('page', 1)
     total_items = g.storage.get_trip_count(session['user_id'])
     pages = total_pages(total_items, TRIPS_PER_PAGE)
     
@@ -209,7 +209,8 @@ def show_trips():
     if error:
         flash(error['message'], 'error')
         return redirect(url_for('show_trips', page=error['page']))
-
+    
+    page = int(page)
     offset = (page - 1) * TRIPS_PER_PAGE
 
     trips = g.storage.get_trips_by_user_id(session['user_id'], limit=TRIPS_PER_PAGE, offset=offset)
@@ -226,7 +227,7 @@ def show_trips():
 @app.route("/trips/<int:trip_id>/edit", methods=["GET"])
 @require_trip
 def show_trip_to_edit(trip, trip_id):
-    page = request.args.get('page', 1, type=int)
+    page = request.args.get('page', 1)
     total_items = g.storage.get_trip_count(session['user_id'])
     pages = total_pages(total_items, TRIPS_PER_PAGE)
 
@@ -235,6 +236,7 @@ def show_trip_to_edit(trip, trip_id):
         flash(error['message'], 'error')
         return redirect(url_for('show_trip_to_edit', trip_id=trip_id, page=error['page']))
 
+    page = int(page)
     offset = (page - 1) * TRIPS_PER_PAGE
 
     trips = g.storage.get_trips_by_user_id(session['user_id'], limit=TRIPS_PER_PAGE, offset=offset)
@@ -309,13 +311,14 @@ def show_trip_schedule(trip, trip_id):
     all_plans = g.storage.get_itinerary(trip_id)
     itinerary = plans_by_date(all_plans)
 
-    page = request.args.get('page', 1, type=int)
+    page = request.args.get('page', 1)
     pages = total_pages(len(itinerary.keys()), DAYS_PER_PAGE)
     error = error_for_page(page, pages)
     if error:
         flash(error['message'], 'error')
         return redirect(url_for('show_trip_schedule', trip_id=trip_id, page=error['page']))
     
+    page = int(page)
     plans = plans_per_page(itinerary, page, DAYS_PER_PAGE)
     time = request.args.get("time", "")
     activity = request.args.get("activity", "")
@@ -340,13 +343,14 @@ def show_activity_to_edit(activity, trip, trip_id, activity_id):
     all_plans = g.storage.get_itinerary(trip_id)
     itinerary = plans_by_date(all_plans)
 
-    page = request.args.get('page', 1, type=int)
+    page = request.args.get('page', 1)
     pages = total_pages(len(itinerary.keys()), DAYS_PER_PAGE)
     error = error_for_page(page, pages)
     if error:
         flash(error['message'], 'error')
         return redirect(url_for('show_trip_schedule', trip_id=trip_id, page=error['page']))
     
+    page = int(page)
     plans = plans_per_page(itinerary, page, DAYS_PER_PAGE)
 
     return render_template("itinerary.html", 

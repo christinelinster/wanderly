@@ -5,17 +5,13 @@ def check_date_range(date, trip):
     if date:
         format_string = '%Y-%m-%d'
         date = datetime.strptime(date, format_string).date()
-        print(date)
-        print(trip['depart_date'])
-        print(trip['return_date'])
-        print(trip['depart_date'] > date)
         if trip['depart_date'] > date or date > trip['return_date']:
             return "The activity date is outside of trip dates!"
     return None
 
 
 def error_for_trips(destination, start_date, end_date):
-    errors = [] 
+    errors = []
 
     if not destination:
         errors.append("You must provide a the trip name.")
@@ -96,15 +92,16 @@ def plans_per_page(itinerary, page, days_per_page):
     return page_days
 
 def error_for_page(page, pages):
-    temp_page = page
-    if temp_page > pages:
-        temp_page = pages
-    elif temp_page < 1:
-        temp_page = 1
-
-    if temp_page != page:
-        return {'message': 'Page not found. Redirected.', 'page': temp_page}
-    return None
+    try:
+        temp_page = int(page)
+        if temp_page < 1: 
+            raise ValueError("Page must be >= 1.")
+        if temp_page > pages:
+            return {'message': 'Page not found. Redirected.', 'page': pages}
+    except (ValueError, TypeError):
+        return {'message': 'Invalid page number. Redirected.', 'page': 1}
+    else:
+        return None
 
 def total_pages(total_items, items_per_page):
     pages = ((total_items + items_per_page - 1) // items_per_page) or 1
