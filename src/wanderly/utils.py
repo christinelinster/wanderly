@@ -15,7 +15,7 @@ def error_for_trips(destination, start_date, end_date):
 
     if not destination:
         errors.append("You must provide a the trip name.")
-    
+
     if start_date:
         try:
             datetime.strptime(start_date, '%Y-%m-%d')
@@ -29,8 +29,8 @@ def error_for_trips(destination, start_date, end_date):
             errors.append("Return date must be in YYY-MM-DD format.")
 
     if start_date and end_date and start_date > end_date:
-            errors.append("The return date must be after the departure date.")
-    
+        errors.append("The return date must be after the departure date.")
+
     return errors
 
 def error_for_create_user(name, email, password):
@@ -53,15 +53,18 @@ def error_for_activity_input(date, time, activity, cost):
             datetime.strptime(date, '%Y-%m-%d')
         except ValueError:
             errors.append("Date must be in YYY-MM-DD format.")
-    
+
     if time:
-        if not re.match('^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$', time.strip(), re.IGNORECASE):
-            errors.append("Time must in HH:MM AM/PM format.")
-    
+        if not re.match(
+            r'^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$',
+            time.strip(),
+            re.IGNORECASE):
+            errors.append("Time must be in HH:MM AM/PM format.")
+
     if cost:
-        try: 
+        try:
             value = float(cost)
-            if value < 0: 
+            if value < 0:
                 errors.append("Cost must be greater than or equal to 0.")
         except ValueError:
             errors.append("Cost must be a valid number.")
@@ -76,13 +79,13 @@ def get_first_name(trips, user_id, storage):
     return name.split()[0]
 
 def plans_by_date(all_plans):
-    plans_by_date = {}
+    plans = {}
     for activity in all_plans:
         date = activity['at_date'] or ""
-        if date not in plans_by_date:
-            plans_by_date[date] = []
-        plans_by_date[date].append(activity)
-    return plans_by_date
+        if date not in plans:
+            plans[date] = []
+        plans[date].append(activity)
+    return plans
 
 def plans_per_page(itinerary, page, days_per_page):
     start = (page - 1) * days_per_page
@@ -94,14 +97,13 @@ def plans_per_page(itinerary, page, days_per_page):
 def error_for_page(page, pages):
     try:
         temp_page = int(page)
-        if temp_page < 1: 
+        if temp_page < 1:
             raise ValueError("Page must be >= 1.")
         if temp_page > pages:
             return {'message': 'Page not found. Redirected.', 'page': pages}
     except (ValueError, TypeError):
         return {'message': 'Invalid page number. Redirected.', 'page': 1}
-    else:
-        return None
+    return None
 
 def total_pages(total_items, items_per_page):
     pages = ((total_items + items_per_page - 1) // items_per_page) or 1

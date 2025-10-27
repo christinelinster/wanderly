@@ -1,10 +1,11 @@
-import psycopg2
 from contextlib import contextmanager
-from psycopg2.extras import DictCursor
 import os
+import psycopg2
+from psycopg2.extras import DictCursor
+
 
 class Database:
-    
+
     @contextmanager
     def _database_connect(self):
         if os.environ.get('FLASK_ENV') =='production':
@@ -26,14 +27,14 @@ class Database:
             with conn.cursor() as cursor:
                 cursor.execute("""
                                SELECT COUNT(*)
-                               FROM information_schema.tables 
+                               FROM information_schema.tables
                                WHERE table_schema = 'public' AND table_name = 'users'
                                """)
                 if cursor.fetchone()[0] == 0:
                     cursor.execute("""
                                    CREATE TABLE users(
                                         id SERIAL PRIMARY KEY,
-                                        full_name varchar(255) NOT NULL, 
+                                        full_name varchar(255) NOT NULL,
                                         email varchar(255) UNIQUE NOT NULL,
                                         password text NOT NULL,
                                         created_at date NOT NULL DEFAULT now()
@@ -48,7 +49,7 @@ class Database:
                     cursor.execute("""
                                    CREATE TABLE trips(
                                         id serial PRIMARY KEY,
-                                        destination text NOT NULL, 
+                                        destination text NOT NULL,
                                         depart_date date,
                                         return_date date,
                                         user_id integer NOT NULL REFERENCES users(id) ON DELETE CASCADE
@@ -72,13 +73,16 @@ class Database:
                                         FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
                                     );
                                     """)
-                
-# -------- AUTH -------- 
+
+# -------- AUTH --------
     def user_exists(self, email):
-        return True if self.get_user_credentials(email) else False
+        return self.get_user_credentials(email)
 
     def create_new_user(self, name, email, password):
-        query = 'INSERT INTO users (full_name, email, password) VALUES (%s, %s, %s)'
+        query = """
+                INSERT INTO users (full_name, email, password)
+                VALUES (%s, %s, %s)
+                """
         values = (name, email, password,)
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
@@ -90,8 +94,8 @@ class Database:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (email,))
                 user = cursor.fetchone()
-        return user 
-    
+        return user
+
 
 # -------- TRIPS --------
     def get_trip_count(self, user_id):
@@ -109,37 +113,37 @@ class Database:
                 cursor.execute(query, (user_id,))
                 row = cursor.fetchone()
         return row['full_name']
-    
+
     def get_trips_by_user_id(self, user_id, limit, offset):
         query = """
-                SELECT users.full_name AS name, trips.* 
-                FROM trips 
-                JOIN users ON trips.user_id = users.id 
+                SELECT users.full_name AS name, trips.*
+                FROM trips
+                JOIN users ON trips.user_id = users.id
                 WHERE trips.user_id = %s
                 ORDER BY trips.depart_date, trips.return_date, trips.id
                 LIMIT %s OFFSET %s
                 """
-        
+
         with self._database_connect() as conn:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (user_id, limit, offset,))
                 trips = cursor.fetchall()
         return trips
-    
+
     def edit_trip_heading(self, destination, start_date, end_date, trip_id):
         query = """
-                UPDATE trips 
-                SET destination = %s, 
+                UPDATE trips
+                SET destination = %s,
                 depart_date = %s,
                 return_date = %s
                 WHERE id = %s
                 """
-        
+
         values = (destination, start_date, end_date, trip_id,)
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(query, values)
-    
+
     def create_new_trip(self, destination, start_date, end_date, user_id ):
         query = """
                 INSERT INTO trips (destination, depart_date, return_date, user_id)
@@ -167,9 +171,9 @@ class Database:
 # -------- ITINERARY --------
     def get_itinerary(self, trip_id):
         query = """
-                SELECT * 
+                SELECT *
                 FROM plans
-                WHERE plans.trip_id = %s 
+                WHERE plans.trip_id = %s
                 ORDER BY at_date, at_time, plans.id
                 """
         with self._database_connect() as conn:
@@ -177,10 +181,10 @@ class Database:
                 cursor.execute(query, (trip_id,))
                 itinerary = cursor.fetchall()
         return itinerary
-    
+
     def add_new_activity(self, date, time, title, note, cost, trip_id):
         query = """
-                INSERT INTO plans (at_date, at_time, activity, note, cost, trip_id) 
+                INSERT INTO plans (at_date, at_time, activity, note, cost, trip_id)
                 VALUES (%s, %s, %s, %s, %s, %s)
                 """
         values = (date, time, title, note, cost, trip_id,)
@@ -192,13 +196,13 @@ class Database:
         query = 'DELETE FROM plans WHERE trip_id = %s and at_date = %s'
         values = (trip_id, day,)
 
-        if not day: 
+        if not day:
             query = 'DELETE FROM plans WHERE trip_id = %s and at_date IS NULL'
             values = (trip_id,)
-            
+
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
-                cursor.execute(query, values)    
+                cursor.execute(query, values)
 
     def delete_activity_by_id(self, trip_id, activity_id):
         query = 'DELETE FROM plans WHERE trip_id = %s AND id = %s'
@@ -206,14 +210,23 @@ class Database:
             with conn.cursor() as cursor:
                 cursor.execute(query, (trip_id, activity_id,))
 
-    def edit_activity_info(self, date, time, title, note, cost, trip_id, activity_id):
+    def edit_activity_info(
+            self,
+            date,
+            time,
+            title,
+            note,
+            cost,
+            trip_id,
+            activity_id
+            ):
         query = """
-                UPDATE plans 
+                UPDATE plans
                 SET at_date = %s,
-                at_time = %s, 
-                activity = %s, 
-                note = %s, 
-                cost = %s 
+                at_time = %s,
+                activity = %s,
+                note = %s,
+                cost = %s
                 WHERE trip_id = %s AND id = %s
                 """
         values = (date, time, title, note, cost, trip_id, activity_id, )
