@@ -68,6 +68,10 @@ psql -d wanderly < seed.sql
 ```
 Visit http://localhost:5003 in your browser.
 
+6. Login with Seed User
+- Email: launchschool@gmail.com
+- Password: rocketlauncher1!
+
 ## Future Improvements
 
 - View previous trips and itineraries
