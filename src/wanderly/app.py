@@ -14,7 +14,7 @@ from flask import (
     url_for
 )
 from flask import jsonify
-from database import Database
+from .database import Database
 from filters import (
     formatted_date,
     formatted_date_activity,
