@@ -1,6 +1,6 @@
 # Wanderly
 
-Wanderly is a Flask-based travel itinerary planner that helps users organize trips, activities, notes, costs, and more in one seamless web application. They can create multi-day travel plans, log activities by date and time, manage costs, and view all trip details through a clean and responsive interface. 
+Wanderly is a Flask-based travel itinerary planner that helps users organize trips, activities, notes, costs, and more in one seamless web application. They can create multi-day travel plans, log activities by date and time, manage costs, and view all trip details through a clean and responsive interface.
 
 ---
 
@@ -8,15 +8,15 @@ Wanderly is a Flask-based travel itinerary planner that helps users organize tri
 
 - **Trip Management**: Create, view, edit, and delete trips.
 - **Itinerary Planner**: Add metadata for activities, ordered by date and time.
-- **Cost Tracking**: Record and view estimated costs for each activity or day. 
+- **Cost Tracking**: Record and view estimated costs for each activity or day.
 - **User Authentication**: Secure login and session management.
 - **Pagination**: Browse trips and itineraries efficiently with paginated views.
 - **Form Validation**: Ensure consistent input formats with client and server-side validation for dates, times, and costs.
-- **Responsive Front-End**: HTML, CSS, and Javscript-based UI that adapts to different devices so you can plan at the desk or on the go. 
+- **Responsive Front-End**: HTML, CSS, and Javscript-based UI that adapts to different devices so you can plan at the desk or on the go.
 
 ---
 
-## Tech Stack 
+## Tech Stack
 
 | Layer | Technology |
 |-------|-------------|
@@ -43,7 +43,7 @@ Before starting Wanderly, ensure you have the following:
 cd wanderly
 ```
 
-2. Install Dependencies 
+2. Install Dependencies
 ```bash
 poetry install
 ```
@@ -56,28 +56,21 @@ CREATE DATABASE wanderly;
 \q
 ```
 
-4. Run the Application 
+4. Run the Application
 ```bash
 cd src/wanderly
 poetry run python app.py
 ```
 
-5. Load Seed Data
-```bash
-psql -d wanderly < seed.sql
-```
 Visit http://localhost:5003 in your browser.
 
-6. Login with Seed User
-- Email: launchschool@gmail.com
-- Password: rocketlauncher1!
 
 ## Future Improvements
 
 - View previous trips and itineraries
-- Automatically calculate total cost by day and trip 
+- Automatically calculate total cost by day and trip
 - Interactive map to locate activites for each day
 - Filter and sort activities based on tags (e.g., food, activity, location)
-- Collaborative trip planning 
-- Notification system for upcoming activities 
-- Email / SMS reminders for scheduled tasks 
+- Collaborative trip planning
+- Notification system for upcoming activities
+- Email / SMS reminders for scheduled tasks

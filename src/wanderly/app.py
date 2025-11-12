@@ -13,6 +13,7 @@ from flask import (
     session,
     url_for
 )
+from flask import jsonify
 from database import Database
 from filters import (
     formatted_date,
@@ -39,29 +40,6 @@ app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
 TRIPS_PER_PAGE = 8
 DAYS_PER_PAGE = 4
-
-# ---- SEED DATA ----
-def seed_user():
-    with app.app_context():
-        storage = Database()
-        user = {
-            'name':'launchschool',
-            'email': 'launchschool@gmail.com',
-            'password':'rocketlauncher1!'
-        }
-
-        if not storage.user_exists(user['email']):
-            hash = bcrypt.hashpw(
-                user['password'].encode('utf-8'),
-                bcrypt.gensalt()
-                )
-            storage.create_new_user(
-                user['name'],
-                user['email'],
-                hash.decode('utf-8'))
-            print("Seed user created.")
-        else:
-            print("Seed user already exists.")
 
 # ---- JINJA FILTERS ----
 app.jinja_env.filters['formatted_date'] = formatted_date
@@ -324,11 +302,9 @@ def create_trip():
         start_date,
         end_date,
         session['user_id'])
-    total_items = g.storage.get_trip_count(session['user_id'])
-    page = total_pages(total_items, TRIPS_PER_PAGE)
 
     flash('Your new adventure has been created!', "success")
-    return redirect(url_for('show_trips', page=page))
+    return redirect(url_for('show_trips'))
 
 
 # ---- ITINERARY ----
@@ -487,9 +463,41 @@ def delete_activity(_activity, _trip, trip_id, activity_id):
         )
 
 
+# ---- HEALTH / WARMING ----
+@app.route('/health')
+def health():
+    """Return JSON health status. 200 when DB reachable, 500 otherwise."""
+    try:
+        db_ok = g.storage.is_healthy()
+    except Exception:
+        db_ok = False
+    status = {'status': 'ok' if db_ok else 'error', 'db': db_ok}
+    code = 200 if db_ok else 500
+    return jsonify(status), code
+
+
+@app.route('/ready')
+def ready():
+    """Simple readiness endpoint used by the warming page and load balancers.
+
+    Returns 200 when DB is reachable, 503 otherwise.
+    """
+    try:
+        if g.storage.is_healthy():
+            return ('', 200)
+    except Exception:
+        pass
+    return ('', 503)
+
+
+@app.route('/warming')
+def warming():
+    """Serve a lightweight warming page that polls /ready and redirects when ready."""
+    return render_template('warming_up.html')
+
+
 if __name__ == "__main__":
     if os.environ.get('FLASK_ENV') == 'production':
         app.run(debug=False)
     else:
-        seed_user()
         app.run(debug=True, port=5003)

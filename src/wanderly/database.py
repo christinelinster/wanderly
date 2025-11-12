@@ -182,6 +182,22 @@ class Database:
                 itinerary = cursor.fetchall()
         return itinerary
 
+    def is_healthy(self):
+        """A lightweight check that the database can be reached.
+
+        Returns True when a simple query succeeds, False otherwise.
+        This is used by health/readiness endpoints to determine if the
+        application is ready to receive traffic.
+        """
+        try:
+            with self._database_connect() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute('SELECT 1')
+                    cursor.fetchone()
+            return True
+        except Exception:
+            return False
+
     def add_new_activity(self, date, time, title, note, cost, trip_id):
         query = """
                 INSERT INTO plans (at_date, at_time, activity, note, cost, trip_id)

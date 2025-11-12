@@ -214,7 +214,7 @@ form.activity input:focus {
   }
 
   .day-activities {
-    grid-template-columns: 40px 2fr 3fr 2fr 1fr;
+    grid-template-columns: 80px 2fr 3fr 2fr 1fr;
   }
 
   .activity-label>.note,
