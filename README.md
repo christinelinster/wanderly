@@ -1,8 +1,13 @@
 # ✨ Wanderly ✨
 
-Wanderly is a Flask-based travel itinerary planner that helps users organize trips, activities, notes, costs, and more in one seamless web application. They can create multi-day travel plans, log activities by date and time, manage costs, and view all trip details through a clean and responsive interface.
+Wanderly is a full-stack travel itinerary planner built with **Python**, **Flask**, and **PostgreSQL**. It helps users organize trips, activities, notes, costs, and more into a unified relational data model. Users can manage complex multi-day itineraries with a clean, responsive MVC frontend.
 
 ---
+## 📸 Screenshots
+
+| Login | Dashboard | Itinerary View |
+|:---:|:---:|:---:|
+| <img src="docs/login.png" width="400"> | <img src="docs/dashboard.png" width="400"> | <img src="docs/itinerary.png" width="400"> |
 
 ## Features
 

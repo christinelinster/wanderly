@@ -12,7 +12,8 @@ dependencies = [
     "bcrypt (>=5.0.0,<6.0.0)",
     "pylint (>=4.0.2,<5.0.0)",
     "gunicorn (>=23.0.0,<24.0.0)",
-    "psycopg2-binary (>=2.9.11,<3.0.0)"
+    "psycopg2-binary (>=2.9.11,<3.0.0)",
+    "dotenv (>=0.9.9,<0.10.0)"
 ]
 
 [tool.poetry]
