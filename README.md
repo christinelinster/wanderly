@@ -63,8 +63,7 @@ CREATE DATABASE wanderly;
 
 4. Run the Application
 ```bash
-cd src/wanderly
-poetry run python app.py
+poetry run flask run
 ```
 
 Visit http://localhost:5003 in your browser.

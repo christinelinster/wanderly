@@ -7,23 +7,24 @@ from flask import (
     Flask,
     flash,
     g,
+    jsonify,
     redirect,
     render_template,
     request,
     session,
     url_for
 )
-from flask import jsonify
+
 from dotenv import load_dotenv
-from database import Database
-from filters import (
+from .database import Database
+from .filters import (
     formatted_date,
     formatted_date_activity,
     formatted_time,
     safe_default,
     safe_default_money,
     )
-from utils import (
+from .utils import (
     check_date_range,
     error_for_activity_input,
     error_for_create_user,
