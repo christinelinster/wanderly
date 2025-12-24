@@ -483,20 +483,6 @@ def delete_activity(_activity, _trip, trip_id, activity_id):
         page=page)
         )
 
-
-# ---- HEALTH / WARMING ----
-@app.route('/health')
-def health():
-    """Return JSON health status. 200 when DB reachable, 500 otherwise."""
-    try:
-        db_ok = g.storage.is_healthy()
-    except Exception:
-        db_ok = False
-    status = {'status': 'ok' if db_ok else 'error', 'db': db_ok}
-    code = 200 if db_ok else 500
-    return jsonify(status), code
-
-
 if __name__ == "__main__":
     if os.environ.get('FLASK_ENV') == 'production':
         app.run(debug=False)
